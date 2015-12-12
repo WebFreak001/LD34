@@ -82,7 +82,7 @@ public:
 			_currentMinigame.stop();
 
 		_currentMinigame = minigame;
-		
+
 		game++;
 
 		if (_currentMinigame)
@@ -102,6 +102,7 @@ private:
 
 	void registerMinigame() {
 		import ld34.minigame.testgame : TestGame;
+
 		_minigames ~= new TestGame(this);
 	}
 }
