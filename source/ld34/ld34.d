@@ -7,6 +7,7 @@ import std.stdio;
 import std.random;
 
 import ld34.minigame.minigame;
+import ld34.render.keyindicator;
 
 class LD34 : Game {
 public:
@@ -21,6 +22,13 @@ public:
 	}
 
 	override void load() {
+		_font = new TTFFont();
+		_font.load("res/font/Roboto-Regular.ttf", 64);
+		
+		auto key = new Texture("res/tex/generic/key.png", TextureFilterMode.Nearest, TextureFilterMode.Nearest);
+		_indicatorA = new KeyIndicator("<", _font, key);
+		_indicatorB = new KeyIndicator(">", _font, key);
+		
 		registerMinigame();
 		_currentMinigameIdx = 0;
 		currentMinigame = _minigames[_currentMinigameIdx];
@@ -141,6 +149,18 @@ void main()
 	
 	void reduceLife() {
 	}
+	
+	@property TTFFont font() {
+		return _font;
+	}
+	
+	@property KeyIndicator indicatorA() {
+		return _indicatorA;
+	}
+	
+	@property KeyIndicator indicatorB() {
+		return _indicatorB;
+	}
 
 private:
 	float _delta;
@@ -148,6 +168,9 @@ private:
 	int _buttonB;
 	bool _buttonADown;
 	bool _buttonBDown;
+	TTFFont _font;
+	KeyIndicator _indicatorA;
+	KeyIndicator _indicatorB;
 	Minigame[] _minigames;
 	Minigame _currentMinigame;
 	ulong _currentMinigameIdx;

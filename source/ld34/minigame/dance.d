@@ -76,17 +76,15 @@ void main()
 		_shader.set("tex", 0);
 		_shader.set("color", vec3(1, 1, 1));
 
-		_font = new TTFFont();
-		_font.load("res/font/Roboto-Regular.ttf", 64);
-		_a = new TTFText(_font);
+		_a = new TTFText(_game.font);
 		_a.text = "A";
-		_aSize = _font.measureText(_a.text);
-		_b = new TTFText(_font);
+		_aSize = _game.font.measureText(_a.text);
+		_b = new TTFText(_game.font);
 		_b.text = "B";
-		_bSize = _font.measureText(_b.text);
-		_ab = new TTFText(_font);
+		_bSize = _game.font.measureText(_b.text);
+		_ab = new TTFText(_game.font);
 		_ab.text = "A+B";
-		_abSize = _font.measureText(_ab.text);
+		_abSize = _game.font.measureText(_ab.text);
 	}
 
 	override void start(int difficulty) {
@@ -162,8 +160,10 @@ void main()
 		ShaderProgram.defaultShader.bind();
 
 		if (_key == Key.A) {
-			_a.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - _aSize.x/2, -_aSize.y);
-			_game.target.draw(_a);
+			_game.indicatorA.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - 24, -24);
+			_game.target.draw(_game.indicatorA);
+			//_a.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - _aSize.x/2, -_aSize.y);
+			//_game.target.draw(_a);
 		} else if (_key == Key.B) {
 			_b.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - _bSize.x/2, -_bSize.y);
 			_game.target.draw(_b);
@@ -195,7 +195,6 @@ private:
 	int _selected;
 	Key _key;
 
-	TTFFont _font;
 	TTFText _a;
 	vec2 _aSize;
 	TTFText _b;
