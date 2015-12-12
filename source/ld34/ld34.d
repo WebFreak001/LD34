@@ -5,6 +5,7 @@ import d2d;
 import std.algorithm;
 import std.stdio;
 import std.random;
+import std.datetime;
 
 import ld34.minigame.minigame;
 import ld34.render.keyindicator;
@@ -51,7 +52,7 @@ public:
 		_delta = delta;
 		_currentMinigame.update();
 
-		if (_currentMinigame.isDone) {
+		if (_currentMinigame.isDone || _gameTimer.peek.to!Duration >= _currentMinigame.getPlayTime) {
 			writeln("isWon: ", _currentMinigame.hasWon);
 			if (!_currentMinigame.hasWon)
 				reduceLife();
@@ -117,8 +118,12 @@ public:
 
 		game++;
 
-		if (_currentMinigame)
+		if (_currentMinigame) {
 			_currentMinigame.start(game / 5);
+			_gameTimer.stop();
+			_gameTimer.reset();
+			_gameTimer.start();
+		}
 		return _currentMinigame;
 	}
 
@@ -159,6 +164,7 @@ private:
 	ulong _currentMinigameIdx;
 	int game = 0;
 	ShaderProgram _colorTexture;
+	StopWatch _gameTimer;
 
 	void newGame() {
 		_currentMinigameIdx++;
