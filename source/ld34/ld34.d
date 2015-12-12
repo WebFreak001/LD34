@@ -72,6 +72,8 @@ public:
 		_renderTex = new RenderTexture(WindowWidth, WindowHeight);
 		_renderQuad = RectangleShape.create(_renderTex.texture, vec2(0, 0),
 			vec2(WindowWidth, WindowHeight), vec4(0, 1, 1, 0));
+
+		randomizeKeys();
 	}
 
 	override void update(float delta) {
@@ -86,7 +88,7 @@ public:
 			}
 			break;
 		case ControlsShow:
-			if (_time > 1.0f) {
+			if (_time > 2.5f) {
 				_state = Game;
 				_time = 0;
 				newGame();
@@ -115,6 +117,7 @@ public:
 				else
 					_state = ControlsShow;
 				_time = 0;
+				randomizeKeys();
 			}
 			break;
 		}
@@ -257,6 +260,31 @@ public:
 		_state = GameState.FasterAnnounceShow;
 		_sFaster.play(0, 2);
 		writeln("FASTER!");
+	}
+
+	void randomizeKeys() {
+		auto key1 = uniform(0, 36);
+		auto key2 = (uniform(0, 35) + key1 + 1) % 36;
+		
+		_buttonADown = false;
+		_buttonBDown = false;
+		_indicatorA.pressed = false;
+		_indicatorB.pressed = false;
+		
+		if (key1 > 25) {
+			_buttonA = SDLK_0 + key1 - 26;
+		} else {
+			_buttonA = SDLK_a + key1;
+		}
+
+		if (key2 > 25) {
+			_buttonB = SDLK_0 + key2 - 26;
+		} else {
+			_buttonB = SDLK_a + key2;
+		}
+		
+		_indicatorA.setKey([cast(char) _buttonA]);
+		_indicatorB.setKey([cast(char) _buttonB]);
 	}
 
 private:
