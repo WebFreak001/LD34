@@ -1,8 +1,10 @@
 module ld34.ld34;
 
 import d2d;
+
 import std.algorithm;
 import std.stdio;
+import std.random;
 
 import ld34.minigame.minigame;
 
@@ -20,7 +22,8 @@ public:
 
 	override void load() {
 		registerMinigame();
-		currentMinigame = _minigames[9];
+		_currentMinigameIdx = 0;
+		currentMinigame = _minigames[_currentMinigameIdx];
 
 		_colorTexture = new ShaderProgram();
 		Shader vertex = new Shader();
@@ -65,7 +68,7 @@ void main()
 
 		if (_currentMinigame.isDone) {
 			writeln("isWon: ", _currentMinigame.hasWon);
-			currentMinigame = _minigames[9];
+		newGame();
 		}
 	}
 
@@ -142,8 +145,20 @@ private:
 	bool _buttonBDown;
 	Minigame[] _minigames;
 	Minigame _currentMinigame;
+	ulong _currentMinigameIdx;
 	int game = 0;
 	ShaderProgram _colorTexture;
+
+	void newGame() {
+		_currentMinigameIdx++;
+
+		if (_currentMinigameIdx > _minigames.length) {
+			randomShuffle(_minigames);
+			_currentMinigameIdx = 0;
+		}
+
+		currentMinigame = _minigames[_currentMinigameIdx];
+	}
 
 	void registerMinigame() {
 		import ld34.minigame.testgame : TestGame;
@@ -181,5 +196,7 @@ private:
 		_minigames ~= new Selfie(this);
 		_minigames ~= new Simon(this);
 		_minigames ~= new SpamAlternating(this);
+
+		randomShuffle(_minigames);
 	}
 }
