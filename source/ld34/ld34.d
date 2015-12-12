@@ -90,10 +90,10 @@ public:
 		_healthBar = RectangleShape.create(new Texture("res/tex/generic/health.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest),
 			vec2((WindowWidth - 256) * 0.5f, 0), vec2(256, 64));
-			
+
 		_blank = new Texture();
 		_blank.create(1, 1, cast(ubyte[]) [255, 255, 255, 255]);
-		
+
 		_blankShape = RectangleShape.create(_blank, vec2(0, 0), vec2(1, 1));
 		_blendShape = RectangleShape.create(_blank, vec2(0, 0), vec2(WindowWidth, WindowHeight));
 		
@@ -332,7 +332,7 @@ public:
 			break;
 		}
 	}
-	
+
 	void drawMenu() {
 		matrixStack.push();
 		matrixStack.top = matrixStack.top.translate2d(
@@ -345,7 +345,7 @@ public:
 		_colorTexture.set("opacity", 1.0f);
 		matrixStack.pop();
 	}
-	
+
 	@property int totalScore() const {
 		return cast(int) round(game * 1000 * pow(1.15, _speed));
 	}
@@ -522,9 +522,9 @@ private:
 		import ld34.minigame.spamalt : SpamAlternating;
 
 		//_minigames ~= new TestGame(this);
-		///_minigames ~= new AlignAndPull(this);
+		//_minigames ~= new AlignAndPull(this);
 		_minigames ~= new Claw(this);
-		//_minigames ~= new Climb(this);
+		_minigames ~= new Climb(this);
 		_minigames ~= new Dance(this);
 		_minigames ~= new DontReact(this);
 		//_minigames ~= new DontSimon(this);
