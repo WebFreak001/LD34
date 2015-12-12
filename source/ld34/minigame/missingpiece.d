@@ -67,6 +67,9 @@ public:
 	}
 
 	override void stop() {
+	}
+	
+	override @property bool hasWon() {
 		setBlock(x, y, 5);
 		switch (rota) {
 		case 3:
@@ -99,7 +102,7 @@ public:
 					continue LineLoop;
 			linesCleared++;
 		}
-		_won = linesCleared > 1;
+		return linesCleared > 1;
 	}
 
 	override void update() {
