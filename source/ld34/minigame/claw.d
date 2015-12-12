@@ -85,7 +85,7 @@ public:
 
 		_floor = RectangleShape.create(
 			_spritesheet,
-			vec2(0, game.target.height-64*4),
+			vec2(0, WindowHeight-64*4),
 			vec2(64*4*10, 64*4),
 			vec4(0.75, 0, 1, 0.25)
 		);
@@ -115,16 +115,16 @@ public:
 		super.start(difficulty);
 		_t = 0;
 		_clawTexOffset = vec2(0, 0);
-		_pos = vec2(_game.target.width / 2 - 64 * 2, 0);
+		_pos = vec2(WindowWidth / 2 - 64 * 2, 0);
 		_state = ClawState.GoingDown;
 		_target = uniform!TargetBox();
 		_putBoxOnLeft = !!dice(0.5, 0.5);
-		_putBox.position = vec2(_putBoxOnLeft ? 0 : (_game.target.width - 22 * 4),
-			_game.target.height - (9 + 2) * 4);
+		_putBox.position = vec2(_putBoxOnLeft ? 0 : (WindowWidth - 22 * 4),
+			WindowHeight - (9 + 2) * 4);
 		foreach (box; _box)
 			box.position = vec2(uniform(_putBoxOnLeft ? 32 * 4 : 0,
-				_game.target.width - 64 * 4) - (_putBoxOnLeft ? 0 : 32 * 4),
-				_game.target.height - 64 * 4);
+				WindowWidth - 64 * 4) - (_putBoxOnLeft ? 0 : 32 * 4),
+				WindowHeight - 64 * 4);
 		_gotBox = false;
 	}
 
@@ -141,8 +141,8 @@ public:
 				_pos.x += _game.delta * 600;
 
 			_pos.y += _game.delta * 300;
-			_pos.y = min(_pos.y, _game.target.height - _claw.size.y);
-			if (_pos.y == _game.target.height - _claw.size.y) {
+			_pos.y = min(_pos.y, WindowHeight - _claw.size.y);
+			if (_pos.y == WindowHeight - _claw.size.y) {
 				_state = ClawState.Grabing;
 				_t = 0;
 			}
@@ -193,8 +193,8 @@ public:
 			} else {
 				_box[_target].position = _box[_target].position + vec2(0, _game.delta * 300);
 				_box[_target].position = vec2(_box[_target].position.x,
-					min(_box[_target].position.y, _game.target.height - _claw.size.y));
-				if (_box[_target].position.y == _game.target.height - _claw.size.y) {
+					min(_box[_target].position.y, WindowHeight - _claw.size.y));
+				if (_box[_target].position.y == WindowHeight - _claw.size.y) {
 					_done = true;
 					if (_putBoxOnLeft) {
 						_won = _box[_target].position.x + _box[_target].size.x / 2 < _putBox.size.x;

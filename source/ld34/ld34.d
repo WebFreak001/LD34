@@ -9,12 +9,16 @@ import std.datetime;
 
 import ld34.minigame.minigame;
 import ld34.render.keyindicator;
+import ld34.render.rendertexture;
+
+public enum WindowWidth = 1280;
+public enum WindowHeight = 720;
 
 class LD34 : Game {
 public:
 	override void start() {
-		windowWidth = 1280;
-		windowHeight = 720;
+		windowWidth = WindowWidth;
+		windowHeight = WindowHeight;
 		windowTitle = "LD34 Growing madness!";
 		maxFPS = 0;
 		flags |= WindowFlags.Resizable;
@@ -46,6 +50,9 @@ public:
 		_colorTexture.registerUniform("projection");
 		_colorTexture.set("tex", 0);
 		_colorTexture.set("color", vec3(1, 1, 1));
+		
+		_renderTex = new RenderTexture(WindowWidth, WindowHeight);
+		_renderQuad = RectangleShape.create(_renderTex.texture, vec2(0, 0), vec2(WindowWidth, WindowHeight), vec4(0, 1, 1, 0));
 	}
 
 	override void update(float delta) {
@@ -90,8 +97,12 @@ public:
 	}
 
 	override void draw() {
-		window.clear(Color3.SkyBlue);
+		_renderTex.bind();
+		_renderTex.clear(Color3.SkyBlue);
 		_currentMinigame.draw();
+		window.bind();
+		window.clear(Color3.DarkMagenta);
+		window.draw(_renderQuad);
 	}
 
 	@property float delta() const {
@@ -127,8 +138,8 @@ public:
 		return _currentMinigame;
 	}
 
-	@property Window target() {
-		return this.window;
+	@property IRenderTarget target() {
+		return _renderTex;
 	}
 
 	@property auto colorTextureShader() {
@@ -165,6 +176,8 @@ private:
 	int game = 0;
 	ShaderProgram _colorTexture;
 	StopWatch _gameTimer;
+	RenderTexture _renderTex;
+	RectangleShape _renderQuad;
 
 	void newGame() {
 		_currentMinigameIdx++;

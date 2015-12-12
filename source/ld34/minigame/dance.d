@@ -13,29 +13,29 @@ public:
 		super(game);
 		_spritesheet = new Texture("res/tex/dance/dancers.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
-		int div = _game.target.width / 4;
+		int div = WindowWidth / 4;
 		//dfmt off
 		_guys[0] = Guy(RectangleShape.create(
 			_spritesheet,
-			vec2(div*0 + 64*1, _game.target.height-64*4),
+			vec2(div*0 + 64*1, WindowHeight-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0, 0.25, 0.25)
 		), 0);
 		_guys[1] = Guy(RectangleShape.create(
 			_spritesheet,
-			vec2(div*1 + 64*1, _game.target.height-64*4),
+			vec2(div*1 + 64*1, WindowHeight-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0.25, 0.25, 0.5)
 		), 0);
 		_guys[2] = Guy(RectangleShape.create(
 			_spritesheet,
-			vec2(div*2 + 64*1, _game.target.height-64*4),
+			vec2(div*2 + 64*1, WindowHeight-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0.5, 0.25, 0.75)
 		), 0);
 		_guys[3] = Guy(RectangleShape.create(
 			_spritesheet,
-			vec2(div*3 + 64*1, _game.target.height-64*4),
+			vec2(div*3 + 64*1, WindowHeight-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0.75, 0.25, 1)
 		), 0);
