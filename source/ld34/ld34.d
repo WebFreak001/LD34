@@ -256,7 +256,7 @@ public:
 	}
 
 	void increaseSpeed() {
-		_speed *= 1.1f;
+		_speed *= 1.05f;
 		_state = GameState.FasterAnnounceShow;
 		_sFaster.play(0, 2);
 		writeln("FASTER!");
