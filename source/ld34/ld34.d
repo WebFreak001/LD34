@@ -102,7 +102,39 @@ private:
 
 	void registerMinigame() {
 		import ld34.minigame.testgame : TestGame;
+		import ld34.minigame.alignandpull : AlignAndPull;
+		import ld34.minigame.climb : Climb;
+		import ld34.minigame.dance : Dance;
+		import ld34.minigame.dontreact : DontReact;
+		import ld34.minigame.dontsimon : DontSimon;
+		import ld34.minigame.fish : Fish;
+		import ld34.minigame.flappy : Flappy;
+		import ld34.minigame.floppyavoid : FloppyAvoid;
+		import ld34.minigame.missingpiece : MissingPiece;
+		import ld34.minigame.qwop : QWOP;
+		import ld34.minigame.racer : Racer;
+		import ld34.minigame.reactquickly : ReactQuickly;
+		import ld34.minigame.rescue : Rescue;
+		import ld34.minigame.selfie : Selfie;
+		import ld34.minigame.simon : Simon;
+		import ld34.minigame.spamalt : SpamAlternating;
 
 		_minigames ~= new TestGame(this);
+		_minigames ~= new AlignAndPull(this);
+		_minigames ~= new Climb(this);
+		_minigames ~= new Dance(this);
+		_minigames ~= new DontReact(this);
+		_minigames ~= new DontSimon(this);
+		_minigames ~= new Fish(this);
+		_minigames ~= new Flappy(this);
+		_minigames ~= new FloppyAvoid(this);
+		_minigames ~= new MissingPiece(this);
+		_minigames ~= new QWOP(this);
+		_minigames ~= new Racer(this);
+		_minigames ~= new ReactQuickly(this);
+		_minigames ~= new Rescue(this);
+		_minigames ~= new Selfie(this);
+		_minigames ~= new Simon(this);
+		_minigames ~= new SpamAlternating(this);
 	}
 }
