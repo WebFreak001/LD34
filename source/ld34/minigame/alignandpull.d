@@ -37,6 +37,16 @@ public:
 		cucumberY = 0;
 		if (_difficulty < 1)
 			_difficulty = 1;
+		if (_difficulty > 2)
+			_difficulty = 2;
+			
+		if(_difficulty == 2) {
+			cucumber.texCoords = vec4(0.5, 0, 1, 0.5);
+			cucumber.create();
+		} else {
+			cucumber.texCoords = vec4(0.5, 0.5, 1, 1);
+			cucumber.create();
+		}
 	}
 
 	override void stop() {
@@ -45,9 +55,9 @@ public:
 	override void update() {
 		strength -= _game.delta;
 		if (_game.isButtonADown && !aDown)
-			x -= 6 / _difficulty;
+			x -= 8 / _difficulty;
 		if (_game.isButtonBDown && !bDown)
-			x += 6 / _difficulty;
+			x += 8 / _difficulty;
 		if (_game.isButtonADown && _game.isButtonBDown && !isDecending && !isPulling && y > 199)
 			isDecending = true;
 
