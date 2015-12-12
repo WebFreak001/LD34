@@ -11,6 +11,8 @@ import ld34.minigame.minigame;
 import ld34.render.keyindicator;
 import ld34.render.rendertexture;
 
+version = ImprovedGameplay;
+
 public enum WindowWidth = 1280;
 public enum WindowHeight = 720;
 
@@ -50,13 +52,15 @@ public:
 		_colorTexture.registerUniform("projection");
 		_colorTexture.set("tex", 0);
 		_colorTexture.set("color", vec3(1, 1, 1));
-		
+
 		_renderTex = new RenderTexture(WindowWidth, WindowHeight);
-		_renderQuad = RectangleShape.create(_renderTex.texture, vec2(0, 0), vec2(WindowWidth, WindowHeight), vec4(0, 1, 1, 0));
+		_renderQuad = RectangleShape.create(_renderTex.texture, vec2(0, 0),
+			vec2(WindowWidth, WindowHeight), vec4(0, 1, 1, 0));
 	}
 
 	override void update(float delta) {
 		_delta = delta;
+		_time += delta;
 		_currentMinigame.update();
 
 		if (_currentMinigame.isDone || _gameTimer.peek.to!Duration >= _currentMinigame.getPlayTime) {
@@ -101,8 +105,16 @@ public:
 		_renderTex.clear(Color3.SkyBlue);
 		_currentMinigame.draw();
 		window.bind();
-		window.clear(Color3.DarkMagenta);
-		window.draw(_renderQuad);
+		window.clear(Color3.SkyBlue);
+		version (ImprovedGameplay) {
+			matrixStack.push();
+			matrixStack.top = matrixStack.top * mat4.identity.translate2d(-WindowWidth / 2,
+				-WindowHeight / 2).scale2d(sin(_time) * 0.2f + 0.6f, cos(_time) * 0.1f + 0.6f).rotate2d(_time * 0.3f).translate2d(
+				WindowWidth / 2, WindowHeight / 2);
+			window.draw(_renderQuad);
+			matrixStack.pop();
+		} else
+			window.draw(_renderQuad);
 	}
 
 	@property float delta() const {
@@ -178,6 +190,7 @@ private:
 	StopWatch _gameTimer;
 	RenderTexture _renderTex;
 	RectangleShape _renderQuad;
+	float _time = 0;
 
 	void newGame() {
 		_currentMinigameIdx++;
