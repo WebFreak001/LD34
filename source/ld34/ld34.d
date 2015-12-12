@@ -82,9 +82,11 @@ public:
 			_currentMinigame.stop();
 
 		_currentMinigame = minigame;
+		
+		game++;
 
 		if (_currentMinigame)
-			_currentMinigame.start();
+			_currentMinigame.start(game / 5);
 		return _currentMinigame;
 	}
 
@@ -96,6 +98,7 @@ private:
 	bool _buttonBDown;
 	Minigame[] _minigames;
 	Minigame _currentMinigame;
+	int game = 0;
 
 	void registerMinigame() {
 		import ld34.minigame.testgame : TestGame;

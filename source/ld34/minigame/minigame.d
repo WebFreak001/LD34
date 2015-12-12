@@ -9,7 +9,7 @@ public:
 		this._game = game;
 	}
 
-	abstract void start() {
+	abstract void start(int difficulty) {
 		_done = false;
 		_won = false;
 	}

@@ -11,8 +11,8 @@ public:
 		super(game);
 	}
 
-	override void start() {
-		super.start();
+	override void start(int difficulty) {
+		super.start(difficulty);
 		t = 0;
 		writeln(__PRETTY_FUNCTION__);
 	}
