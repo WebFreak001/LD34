@@ -25,9 +25,12 @@ public:
 		_font = new TTFFont();
 		_font.load("res/font/Roboto-Regular.ttf", 64);
 
-		auto key = new Texture("res/tex/generic/key.png", TextureFilterMode.Nearest, TextureFilterMode.Nearest);
-		_indicatorA = new KeyIndicator("<", _font, key);
-		_indicatorB = new KeyIndicator(">", _font, key);
+		auto key = new Texture("res/tex/generic/key.png",
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
+		auto down = new Texture("res/tex/generic/keydown.png",
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
+		_indicatorA = new KeyIndicator("<", _font, key, down);
+		_indicatorB = new KeyIndicator(">", _font, key, down);
 
 		registerMinigame();
 		_currentMinigameIdx = 0;
@@ -63,16 +66,22 @@ public:
 			writefln("New Size: %sx%s", event.width, event.height);
 			break;
 		case Event.Type.KeyPressed:
-			if (event.key == _buttonA)
+			if (event.key == _buttonA) {
 				_buttonADown = true;
-			else if (event.key == _buttonB)
+				_indicatorA.pressed = true;
+			} else if (event.key == _buttonB) {
 				_buttonBDown = true;
+				_indicatorB.pressed = true;
+			}
 			break;
 		case Event.Type.KeyReleased:
-			if (event.key == _buttonA)
+			if (event.key == _buttonA) {
 				_buttonADown = false;
-			else if (event.key == _buttonB)
+				_indicatorA.pressed = false;
+			} else if (event.key == _buttonB) {
 				_buttonBDown = false;
+				_indicatorB.pressed = false;
+			}
 			break;
 		default:
 			break;
