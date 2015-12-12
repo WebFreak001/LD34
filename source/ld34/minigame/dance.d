@@ -55,11 +55,9 @@ public:
 	override void start(int difficulty) {
 		super.start(difficulty);
 		_t = 0;
-		writeln(__PRETTY_FUNCTION__);
 	}
 
 	override void stop() {
-		writeln(__PRETTY_FUNCTION__);
 	}
 
 	override void update() {
@@ -85,14 +83,10 @@ public:
 			_key = uniform!Key();
 		}
 
-		if (_t >= 10) {
-			float counter = 0;
-			foreach (guy; _guys)
-				counter += guy.counter;
-
-			_done = true;
-			_won = counter > 5;
-		}
+		float counter = 0;
+		foreach (guy; _guys)
+			counter += guy.counter;
+		_won = counter > 5;
 	}
 
 	override void draw() {
