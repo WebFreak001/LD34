@@ -21,6 +21,7 @@ public:
 		]) {
 			auto text = new TTFText(_game.font);
 			text.text = str;
+			text.position = vec2(640 - _game.font.measureText(str).x / 2, 150);
 			texts ~= text;
 			button = RectangleShape.create(new Texture("res/tex/button/button.png", TextureFilterMode.Nearest, TextureFilterMode.Nearest), vec2(), vec2(512, 512));
 		}
@@ -52,7 +53,6 @@ public:
 	override void draw() {
 		button.position = vec2((1280 - 512) * 0.5f, 150);
 		_game.target.draw(button);
-		texts[selected].position = vec2(640 - _game.font.measureText(texts[selected].text).x / 2, 150);
 		_game.target.draw(texts[selected]);
 		_game.indicatorA.position = vec2(590 - 24, 400);
 		_game.target.draw(_game.indicatorA);
