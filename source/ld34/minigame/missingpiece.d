@@ -13,17 +13,26 @@ public:
 	this(LD34 game) {
 		super(game);
 
+		//dfmt off
 		tetrisBlock = RectangleShape.create(new Texture("res/tex/tetris/block.png",
-			TextureFilterMode.Nearest, TextureFilterMode.Nearest), vec2(), vec2(48,
-			48));
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest), vec2(), vec2(48, 48));
+		//dfmt on
 
-		borderLeft = new Border(new Texture("res/tex/generic/border.png",
-			TextureFilterMode.Nearest, TextureFilterMode.Nearest));
-		borderRight = new Border(new Texture("res/tex/generic/border.png",
-			TextureFilterMode.Nearest, TextureFilterMode.Nearest));
+		auto border = new Texture("res/tex/generic/border.png",
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
+		auto instructions = new Texture("res/tex/tetris/instructions.png",
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
+
+		borderLeft = new Border(border);
+		borderRight = new Border(border);
 
 		borderLeft.setSize(vec2(500, 600));
 		borderRight.setSize(vec2(192, 600));
+
+		//dfmt off
+		instructionMove = RectangleShape.create(instructions, vec2(), vec2(48, 48), vec4(0, 0, 0.5f, 1));
+		instructionRotate = RectangleShape.create(instructions, vec2(), vec2(48, 48), vec4(0.5f, 0, 1, 1));
+		//dfmt on
 	}
 
 	// PIECE:
@@ -38,7 +47,7 @@ public:
 		wasADown = false;
 		wasBDown = false;
 		x = 5;
-		y = -5;
+		y = -8;
 		rota = 0;
 		//dfmt off
 		switch (difficulty) {
@@ -117,13 +126,13 @@ public:
 		if (_game.isButtonADown && !wasADown)
 			rotateRight();
 
-		if (fallTime > 0.2f) {
+		if (fallTime > 0.3f) {
 			moveDown();
-			fallTime -= 0.2f;
+			fallTime -= 0.3f;
 		}
 		if (!canFit(x, y + 1, rota))
 			blockTime += _game.delta;
-		if (blockTime >= 0.4f) {
+		if (blockTime >= 0.6f) {
 			placeBlock();
 			_done = true;
 		}
@@ -231,6 +240,16 @@ public:
 			}
 		}
 
+		_game.indicatorA.position = vec2(x * 48 + offsetX + 100, y * 48 + offsetY - 25);
+		_game.target.draw(_game.indicatorA);
+		instructionRotate.position = vec2(x * 48 + offsetX + 150, y * 48 + offsetY - 25);
+		_game.target.draw(instructionRotate);
+		
+		_game.indicatorB.position = vec2(x * 48 + offsetX + 100, y * 48 + offsetY + 25);
+		_game.target.draw(_game.indicatorB);
+		instructionMove.position = vec2(x * 48 + offsetX + 150, y * 48 + offsetY + 25);
+		_game.target.draw(instructionMove);
+
 		_game.colorTextureShader.bind();
 		_game.colorTextureShader.set("color", playerColor);
 		tetrisBlock.position = vec2(x * 48 + offsetX, y * 48 + offsetY);
@@ -295,4 +314,6 @@ private:
 	bool wasADown, wasBDown;
 	Border borderLeft, borderRight;
 	RectangleShape tetrisBlock;
+	RectangleShape instructionMove;
+	RectangleShape instructionRotate;
 }
