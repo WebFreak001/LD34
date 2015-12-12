@@ -43,6 +43,11 @@ public:
 		_faster = new TTFText(_font);
 		_faster.text = "FASTER!";
 
+		_sAdvance = new Sound("res/sound/advance.wav");
+		_sFaster = new Sound("res/sound/faster.wav");
+		_sHPDown = new Sound("res/sound/hpdown.wav");
+		_sHPUp = new Sound("res/sound/hpup.wav");
+
 		auto key = new Texture("res/tex/generic/key.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 		auto down = new Texture("res/tex/generic/keydown.png",
@@ -89,13 +94,16 @@ public:
 			break;
 		case Game:
 			_currentMinigame.update();
-			if (_currentMinigame.isDone
-					|| _gameTimer.peek.to!Duration >= _currentMinigame.getPlayTime) {
+			auto t = _currentMinigame.getPlayTime;
+			t = dur!"nsecs"(cast(long)(t.total!"nsecs" / _speed));
+			if (_currentMinigame.isDone || _gameTimer.peek.to!Duration >= t) {
 				_currentMinigame.stop();
 				_gameTimer.stop();
 				_gameTimer.reset();
 				if (!_currentMinigame.hasWon)
 					reduceLife();
+				else
+					_sAdvance.play(0, 0);
 				_state = GameEnd;
 				_time = 0;
 			}
@@ -229,6 +237,7 @@ public:
 	}
 
 	void reduceLife() {
+		_sHPDown.play(0, 1);
 	}
 
 	@property TTFFont font() {
@@ -246,6 +255,7 @@ public:
 	void increaseSpeed() {
 		_speed *= 1.1f;
 		_state = GameState.FasterAnnounceShow;
+		_sFaster.play(0, 2);
 		writeln("FASTER!");
 	}
 
@@ -270,6 +280,7 @@ private:
 	float _time = 0;
 	float _speed = 1;
 	GameState _state = GameState.ControlsShow;
+	Sound _sAdvance, _sFaster, _sHPDown, _sHPUp;
 
 	void newGame() {
 		_currentMinigameIdx++;

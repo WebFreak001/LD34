@@ -80,7 +80,7 @@ public:
 		}
 
 		int oldSelect = _selected;
-		_selected = cast(int)(_t * 1.25) % 4;
+		_selected = cast(int)(_t * 2.5) % 4;
 		if (oldSelect != _selected) {
 			_key = uniform!Key();
 		}
