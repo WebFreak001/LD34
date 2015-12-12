@@ -12,6 +12,7 @@ public:
 	abstract void start(int difficulty) {
 		_done = false;
 		_won = false;
+		_difficulty = difficulty;
 	}
 
 	abstract void stop();
@@ -33,4 +34,5 @@ protected:
 	LD34 _game;
 	bool _done;
 	bool _won;
+	int _difficulty;
 }
