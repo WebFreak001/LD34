@@ -140,7 +140,7 @@ public:
 			else if (_game.isButtonBDown)
 				_pos.x += _game.delta * 600;
 
-			_pos.y += _game.delta * 300;
+			_pos.y += _game.delta * 250;
 			_pos.y = min(_pos.y, WindowHeight - _claw.size.y);
 			if (_pos.y == WindowHeight - _claw.size.y) {
 				_state = ClawState.Grabing;

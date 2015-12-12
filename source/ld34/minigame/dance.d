@@ -97,7 +97,7 @@ public:
 		float counter = 0;
 		foreach (guy; _guys)
 			counter += guy.counter;
-		_won = counter > 5;
+		_won = counter > 4;
 	}
 
 	override void draw() {
