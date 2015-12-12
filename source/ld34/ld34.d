@@ -24,6 +24,42 @@ public:
 		registerMinigame();
 		_currentMinigameIdx = 0;
 		currentMinigame = _minigames[_currentMinigameIdx];
+
+		_colorTexture = new ShaderProgram();
+		Shader vertex = new Shader();
+		vertex.load(ShaderType.Vertex, "#version 330
+layout(location = 0) in vec3 in_position;
+layout(location = 1) in vec2 in_tex;
+uniform mat4 transform;
+uniform mat4 projection;
+out vec2 texCoord;
+void main()
+{
+	gl_Position = projection * transform * vec4(in_position, 1);
+	texCoord = in_tex;
+}
+");
+		Shader fragment = new Shader();
+		fragment.load(ShaderType.Fragment, "#version 330
+uniform sampler2D tex;
+uniform vec3 color;
+in vec2 texCoord;
+layout(location = 0) out vec4 out_frag_color;
+void main()
+{
+	out_frag_color = texture(tex, texCoord) * vec4(color, 1);
+}
+");
+		_colorTexture.attach(vertex);
+		_colorTexture.attach(fragment);
+		_colorTexture.link();
+		_colorTexture.bind();
+		_colorTexture.registerUniform("tex");
+		_colorTexture.registerUniform("color");
+		_colorTexture.registerUniform("transform");
+		_colorTexture.registerUniform("projection");
+		_colorTexture.set("tex", 0);
+		_colorTexture.set("color", vec3(1, 1, 1));
 	}
 
 	override void update(float delta) {
@@ -32,7 +68,7 @@ public:
 
 		if (_currentMinigame.isDone) {
 			writeln("isWon: ", _currentMinigame.hasWon);
-			newGame();
+		newGame();
 		}
 	}
 
@@ -93,6 +129,14 @@ public:
 		return _currentMinigame;
 	}
 
+	@property Window target() {
+		return this.window;
+	}
+
+	@property auto colorTextureShader() {
+		return _colorTexture;
+	}
+
 private:
 	float _delta;
 	int _buttonA;
@@ -103,6 +147,7 @@ private:
 	Minigame _currentMinigame;
 	ulong _currentMinigameIdx;
 	int game = 0;
+	ShaderProgram _colorTexture;
 
 	void newGame() {
 		_currentMinigameIdx++;
