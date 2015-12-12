@@ -13,7 +13,8 @@ public:
 	this(LD34 game) {
 		super(game);
 
-		_ballTex = new Texture("res/tex/floppy/ball.png");
+		_ballTex = new Texture("res/tex/floppy/ball.png",
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 		_floppyTex = new Texture("res/tex/floppy/floppy.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 
