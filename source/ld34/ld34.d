@@ -152,7 +152,7 @@ private:
 	void newGame() {
 		_currentMinigameIdx++;
 
-		if (_currentMinigameIdx > _minigames.length) {
+		if (_currentMinigameIdx >= _minigames.length) {
 			randomShuffle(_minigames);
 			_currentMinigameIdx = 0;
 		}
