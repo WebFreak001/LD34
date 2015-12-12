@@ -191,24 +191,24 @@ private:
 		import ld34.minigame.simon : Simon;
 		import ld34.minigame.spamalt : SpamAlternating;
 
-		_minigames ~= new TestGame(this);
-		_minigames ~= new AlignAndPull(this);
+		//_minigames ~= new TestGame(this);
+		///_minigames ~= new AlignAndPull(this);
 		_minigames ~= new Claw(this);
-		_minigames ~= new Climb(this);
+		//_minigames ~= new Climb(this);
 		_minigames ~= new Dance(this);
 		_minigames ~= new DontReact(this);
-		_minigames ~= new DontSimon(this);
-		_minigames ~= new Fish(this);
-		_minigames ~= new Flappy(this);
+		//_minigames ~= new DontSimon(this);
+		//_minigames ~= new Fish(this);
+		//_minigames ~= new Flappy(this);
 		_minigames ~= new FloppyAvoid(this);
 		_minigames ~= new MissingPiece(this);
-		_minigames ~= new QWOP(this);
-		_minigames ~= new Racer(this);
+		//_minigames ~= new QWOP(this);
+		//_minigames ~= new Racer(this);
 		_minigames ~= new ReactQuickly(this);
-		_minigames ~= new Rescue(this);
-		_minigames ~= new Selfie(this);
-		_minigames ~= new Simon(this);
-		_minigames ~= new SpamAlternating(this);
+		//_minigames ~= new Rescue(this);
+		//_minigames ~= new Selfie(this);
+		//_minigames ~= new Simon(this);
+		//_minigames ~= new SpamAlternating(this);
 
 		randomShuffle(_minigames);
 	}
