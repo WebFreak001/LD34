@@ -11,10 +11,19 @@ import ld34.minigame.minigame;
 import ld34.render.keyindicator;
 import ld34.render.rendertexture;
 
-version = ImprovedGameplay;
-
 public enum WindowWidth = 1280;
 public enum WindowHeight = 720;
+
+enum GameState {
+	FasterAnnounceShow,
+	ControlsShow,
+	Game,
+	GameEnd,
+}
+
+static double cubicin(double delta, double offset, double time) {
+	return delta * time * time * time + offset;
+}
 
 class LD34 : Game {
 public:
@@ -31,6 +40,8 @@ public:
 	override void load() {
 		_font = new TTFFont();
 		_font.load("res/font/Roboto-Regular.ttf", 64);
+		_faster = new TTFText(_font);
+		_faster.text = "FASTER!";
 
 		auto key = new Texture("res/tex/generic/key.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
@@ -59,23 +70,52 @@ public:
 	}
 
 	override void update(float delta) {
+		delta *= _speed;
 		_delta = delta;
 		_time += delta;
-		_currentMinigame.update();
-
-		if (_currentMinigame.isDone || _gameTimer.peek.to!Duration >= _currentMinigame.getPlayTime) {
-			writeln("isWon: ", _currentMinigame.hasWon);
-			if (!_currentMinigame.hasWon)
-				reduceLife();
-			newGame();
+		final switch (_state) with (GameState) {
+		case FasterAnnounceShow:
+			if (_time > 1.0f) {
+				_state = ControlsShow;
+				_time = 0;
+			}
+			break;
+		case ControlsShow:
+			if (_time > 1.0f) {
+				_state = Game;
+				_time = 0;
+				newGame();
+			}
+			break;
+		case Game:
+			_currentMinigame.update();
+			if (_currentMinigame.isDone
+					|| _gameTimer.peek.to!Duration >= _currentMinigame.getPlayTime) {
+				_currentMinigame.stop();
+				_gameTimer.stop();
+				_gameTimer.reset();
+				if (!_currentMinigame.hasWon)
+					reduceLife();
+				_state = GameEnd;
+				_time = 0;
+			}
+			break;
+		case GameEnd:
+			if (_time > 0.5f) {
+				if (game % 4 == 0)
+					increaseSpeed();
+				else
+					_state = ControlsShow;
+				_time = 0;
+			}
+			break;
 		}
 	}
 
 	override void onEvent(Event event) {
 		switch (event.type) {
 		case Event.Type.Resized:
-			window.resize(event.width, event.height);
-			writefln("New Size: %sx%s", event.width, event.height);
+			window.resize(WindowWidth, WindowHeight);
 			break;
 		case Event.Type.KeyPressed:
 			if (event.key == _buttonA) {
@@ -101,20 +141,46 @@ public:
 	}
 
 	override void draw() {
-		_renderTex.bind();
-		_renderTex.clear(Color3.SkyBlue);
-		_currentMinigame.draw();
-		window.bind();
-		window.clear(Color3.SkyBlue);
-		version (ImprovedGameplay) {
+		window.clear(Color3.White);
+		final switch (_state) with (GameState) {
+		case FasterAnnounceShow:
 			matrixStack.push();
-			matrixStack.top = matrixStack.top * mat4.identity.translate2d(-WindowWidth / 2,
-				-WindowHeight / 2).scale2d(sin(_time) * 0.2f + 0.6f, cos(_time) * 0.1f + 0.6f).rotate2d(_time * 0.3f).translate2d(
-				WindowWidth / 2, WindowHeight / 2);
+			matrixStack.top = matrixStack.top.translate2d(
+				(WindowWidth - _faster.texture.width) * 0.5f, (WindowHeight + 100) * _time - 50);
+			_colorTexture.bind();
+			_colorTexture.set("color", vec3(0, 0, 0));
+			window.draw(_faster, _colorTexture);
+			matrixStack.pop();
+			break;
+		case ControlsShow:
+			matrixStack.push();
+			//dfmt off
+			matrixStack.top = matrixStack.top.translate2d(-49, -24).scale2d(cubicin(
+				4, 0, min(_time * 2, 1)), cubicin(4, 0, min(_time * 1.9f, 1))).translate2d(WindowWidth * 0.5f, 20 + WindowHeight * 0.5f);
+			//dfmt on
+			indicatorA.position = vec2(0, 0);
+			window.draw(indicatorA);
+			indicatorB.position = vec2(50, 0);
+			window.draw(indicatorB);
+			matrixStack.pop();
+			break;
+		case Game:
+			window.bind();
+			window.clear(Color3.SkyBlue);
+			_currentMinigame.draw();
+			break;
+		case GameEnd:
+			_renderTex.bind();
+			_renderTex.clear(Color3.SkyBlue);
+			_currentMinigame.draw();
+			window.bind();
+			matrixStack.push();
+			matrixStack.top = matrixStack.top.translate2d(cubicin(WindowWidth, 0, _time * 2),
+				0);
 			window.draw(_renderQuad);
 			matrixStack.pop();
-		} else
-			window.draw(_renderQuad);
+			break;
+		}
 	}
 
 	@property float delta() const {
@@ -134,24 +200,28 @@ public:
 	}
 
 	@property Minigame currentMinigame(Minigame minigame) {
-		if (_currentMinigame)
-			_currentMinigame.stop();
-
 		_currentMinigame = minigame;
 
 		game++;
 
 		if (_currentMinigame) {
 			_currentMinigame.start(game / 5);
-			_gameTimer.stop();
-			_gameTimer.reset();
 			_gameTimer.start();
 		}
 		return _currentMinigame;
 	}
 
 	@property IRenderTarget target() {
-		return _renderTex;
+		final switch (_state) with (GameState) {
+		case FasterAnnounceShow:
+			return _renderTex;
+		case ControlsShow:
+			return _renderTex;
+		case Game:
+			return window;
+		case GameEnd:
+			return _renderTex;
+		}
 	}
 
 	@property auto colorTextureShader() {
@@ -173,6 +243,12 @@ public:
 		return _indicatorB;
 	}
 
+	void increaseSpeed() {
+		_speed *= 1.1f;
+		_state = GameState.FasterAnnounceShow;
+		writeln("FASTER!");
+	}
+
 private:
 	float _delta;
 	int _buttonA;
@@ -180,6 +256,7 @@ private:
 	bool _buttonADown;
 	bool _buttonBDown;
 	TTFFont _font;
+	TTFText _faster;
 	KeyIndicator _indicatorA;
 	KeyIndicator _indicatorB;
 	Minigame[] _minigames;
@@ -191,6 +268,8 @@ private:
 	RenderTexture _renderTex;
 	RectangleShape _renderQuad;
 	float _time = 0;
+	float _speed = 1;
+	GameState _state = GameState.ControlsShow;
 
 	void newGame() {
 		_currentMinigameIdx++;
