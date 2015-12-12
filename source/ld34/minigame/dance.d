@@ -39,6 +39,11 @@ public:
 			vec2(64*4, 64*4),
 			vec4(0, 0.75, 0.25, 1)
 		), 0);
+
+		_bg = RectangleShape.create(
+			vec2(0, 0),
+			vec2(WindowWidth, WindowHeight)
+		);
 		//dfmt on
 
 		_shader = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert", "res/shader/texoffset.frag");
@@ -50,6 +55,12 @@ public:
 		_shader.registerUniform("texOffset");
 		_shader.set("tex", 0);
 		_shader.set("color", vec3(1, 1, 1));
+
+		_bgShader = ShaderProgram.fromVertexFragmentFiles("res/shader/background.vert", "res/shader/background.frag");
+		_bgShader.bind();
+		_bgShader.registerUniform("transform");
+		_bgShader.registerUniform("projection");
+		_bgShader.registerUniform("offset");
 	}
 
 	override void start(int difficulty) {
@@ -78,7 +89,7 @@ public:
 		}
 
 		int oldSelect = _selected;
-		_selected = cast(int)(_t * 2.5) % 4;
+		_selected = cast(int)(_t * 1.25) % 4;
 		if (oldSelect != _selected) {
 			_key = uniform!Key();
 		}
@@ -90,6 +101,10 @@ public:
 	}
 
 	override void draw() {
+		_bgShader.bind();
+		_bgShader.set("offset", vec2(_t*30, _t*100));
+		_game.target.draw(_bg, _bgShader);
+
 		foreach (idx, guy; _guys) {
 			_shader.bind();
 
@@ -112,7 +127,7 @@ public:
 			if (_selected == idx)
 				_shader.set("color", vec3(1, 1, 1));
 			else
-				_shader.set("color", vec3(0.15, 0.15, 0.15));
+				_shader.set("color", vec3(0.5, 0.5, 0.5));
 			_game.target.draw(_guys[idx].tex, _shader);
 		}
 
@@ -156,6 +171,8 @@ private:
 
 	Texture _spritesheet;
 	ShaderProgram _shader;
+	ShaderProgram _bgShader;
+	RectangleShape _bg;
 	Guy[4] _guys;
 	int _selected;
 	Key _key;
