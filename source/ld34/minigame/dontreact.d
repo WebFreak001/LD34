@@ -32,7 +32,7 @@ public:
 		super.start(difficulty);
 		selected = uniform(0, texts.length);
 		t = 0;
-		_won = false;
+		_won = true;
 	}
 
 	override void stop() {
@@ -46,7 +46,7 @@ public:
 		_game.indicatorB.pressed = (cast(int)(t * 5) % 2 == 1);
 		if(_game.isButtonADown || _game.isButtonBDown) {
 			_done = true;
-			_won = true;
+			_won = false;
 		}
 	}
 
