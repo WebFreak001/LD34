@@ -68,7 +68,7 @@ void main()
 
 		if (_currentMinigame.isDone) {
 			writeln("isWon: ", _currentMinigame.hasWon);
-		newGame();
+			newGame();
 		}
 	}
 
