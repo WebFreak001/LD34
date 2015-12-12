@@ -70,8 +70,6 @@ public:
 		_indicatorB = new KeyIndicator(">", _font, key, down);
 
 		registerMinigame();
-		_currentMinigameIdx = 0;
-		currentMinigame = _minigames[_currentMinigameIdx];
 
 		_colorTexture = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert",
 			"res/shader/base.frag");
@@ -98,8 +96,28 @@ public:
 		
 		_blankShape = RectangleShape.create(_blank, vec2(0, 0), vec2(1, 1));
 		_blendShape = RectangleShape.create(_blank, vec2(0, 0), vec2(WindowWidth, WindowHeight));
+		
+		reset();
+	}
 
+	void reset() {
+		_delta = 0;
+		_health = 4;
+		_buttonA = 0;
+		_buttonB = 0;
+		_buttonADown = false;
+		_buttonBDown = false;
+		_indicatorA.pressed = false;
+		_indicatorB.pressed = false;
+		game = 0;
+		_gameTimer.stop();
+		_gameTimer.reset();
+		_time = 0;
+		_speed = 1;
 		randomizeKeys();
+		updateHealth();
+		_currentMinigameIdx = 0;
+		currentMinigame = _minigames[_currentMinigameIdx];
 	}
 
 	override void update(float delta) {
@@ -155,6 +173,7 @@ public:
 				_blankShape.position = _gameOverText.position;
 				_blankShape.size = _gameOverText.size;
 				_blankShape.create();
+				reset();
 			}
 			break;
 		case GameOver:
@@ -470,7 +489,7 @@ private:
 	Sound _sAdvance, _sFaster, _sHPDown, _sHPUp;
 	Texture _blank;
 	RectangleShape _blankShape, _blendShape;
-
+	
 	void newGame() {
 		_currentMinigameIdx++;
 
