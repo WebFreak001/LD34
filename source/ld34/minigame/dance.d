@@ -11,8 +11,10 @@ final class Dance : Minigame {
 public:
 	this(LD34 game) {
 		super(game);
-		spritesheet = new Texture("res/tex/dance/dancers.png", TextureFilterMode.Nearest, TextureFilterMode.Nearest);
-		int div = _game.target.width/4;
+		spritesheet = new Texture("res/tex/dance/dancers.png",
+			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
+		int div = _game.target.width / 4;
+		//dfmt off
 		_guys[0] = Guy(RectangleShape.create(
 			spritesheet,
 			vec2(div*0 + 64*1, _game.target.height-64*4),
@@ -37,6 +39,7 @@ public:
 			vec2(64*4, 64*4),
 			vec4(0, 0.75, 0.25, 1)
 		), 0);
+		//dfmt on
 
 		_shader = new ShaderProgram();
 		Shader vertex = new Shader();
@@ -75,16 +78,6 @@ void main()
 		_shader.registerUniform("texOffset");
 		_shader.set("tex", 0);
 		_shader.set("color", vec3(1, 1, 1));
-
-		_a = new TTFText(_game.font);
-		_a.text = "A";
-		_aSize = _game.font.measureText(_a.text);
-		_b = new TTFText(_game.font);
-		_b.text = "B";
-		_bSize = _game.font.measureText(_b.text);
-		_ab = new TTFText(_game.font);
-		_ab.text = "A+B";
-		_abSize = _game.font.measureText(_ab.text);
 	}
 
 	override void start(int difficulty) {
@@ -115,7 +108,7 @@ void main()
 		}
 
 		int oldSelect = _selected;
-		_selected = cast(int)(_t*1.25) % 4;
+		_selected = cast(int)(_t * 1.25) % 4;
 		if (oldSelect != _selected) {
 			_key = uniform!Key();
 		}
@@ -135,7 +128,7 @@ void main()
 			_shader.bind();
 
 			vec2 _texOffset;
-			int frame = cast(int)(_guys[idx].counter*10) % 6;
+			int frame = cast(int)(_guys[idx].counter * 10) % 6;
 			if (frame == 0)
 				_texOffset = vec2(0, 0);
 			else if (frame == 1)
@@ -160,16 +153,21 @@ void main()
 		ShaderProgram.defaultShader.bind();
 
 		if (_key == Key.A) {
-			_game.indicatorA.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - 24, -24);
+			_game.indicatorA.position = _guys[_selected].tex.position + vec2(
+				_guys[_selected].tex.size.x / 2 - 24, -50);
 			_game.target.draw(_game.indicatorA);
-			//_a.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - _aSize.x/2, -_aSize.y);
-			//_game.target.draw(_a);
 		} else if (_key == Key.B) {
-			_b.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - _bSize.x/2, -_bSize.y);
-			_game.target.draw(_b);
+			_game.indicatorB.position = _guys[_selected].tex.position + vec2(
+				_guys[_selected].tex.size.x / 2 - 24, -50);
+			_game.target.draw(_game.indicatorB);
 		} else if (_key == Key.AB) {
-			_ab.position = _guys[_selected].tex.position + vec2(_guys[_selected].tex.size.x/2 - _abSize.x/2, -_abSize.y);
-			_game.target.draw(_ab);
+			_game.indicatorA.position = _guys[_selected].tex.position + vec2(
+				_guys[_selected].tex.size.x / 2 - 24 - 26, -50);
+			_game.target.draw(_game.indicatorA);
+
+			_game.indicatorB.position = _guys[_selected].tex.position + vec2(
+				_guys[_selected].tex.size.x / 2 - 24 + 26, -50);
+			_game.target.draw(_game.indicatorB);
 		}
 	}
 
@@ -184,6 +182,7 @@ private:
 		AB,
 		NONE
 	}
+
 	struct Guy {
 		RectangleShape tex;
 		float counter;
@@ -195,11 +194,5 @@ private:
 	int _selected;
 	Key _key;
 
-	TTFText _a;
-	vec2 _aSize;
-	TTFText _b;
-	vec2 _bSize;
-	TTFText _ab;
-	vec2 _abSize;
 	float _t;
 }

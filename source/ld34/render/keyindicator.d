@@ -9,22 +9,24 @@ public:
 		background = RectangleShape.create(base, vec2(0, 0), vec2(48, 48));
 		this.font = font;
 		text = new TTFText(font);
+		setKey(key);
+		text.multiline = true;
 		text.scale = 0.5f;
-		text.text = key.toUpper;
-		text.position = vec2(24, (48 - font.lineHeight * 0.5f) * 0.5f);
+		setKey(key);
 	}
 
 	override void draw(IRenderTarget target, ShaderProgram shader = null) {
 		matrixStack.push();
 		matrixStack.top = matrixStack.top * transform;
 		background.draw(target, shader);
+		matrixStack.top = matrixStack.top * mat4.translation(24, 20, 0);
 		text.draw(target, shader);
 		matrixStack.pop();
 	}
-	
+
 	void setKey(string key) {
 		text.text = key.toUpper;
-		text.position = vec2((48 - text.texture.width) * 0.5f, (48 - font.lineHeight) * 0.5f);
+		text.position = vec2(-font.measureText(key).x * 0.5f, -font.lineHeight * 0.5f);
 	}
 
 private:

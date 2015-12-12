@@ -23,8 +23,8 @@ public:
 	override void draw(IRenderTarget target, ShaderProgram shader = null) {
 		matrixStack.push();
 		matrixStack.top = matrixStack.top * transform;
-		foreach(x; 0 .. 3)
-			foreach(y; 0 .. 3)
+		foreach (x; 0 .. 3)
+			foreach (y; 0 .. 3)
 				grid[x][y].draw(target, shader);
 		matrixStack.pop();
 	}
@@ -45,35 +45,35 @@ private:
 		auto height = _size.y - _borderSize - _borderSize;
 		grid[0][0].size = vec2(_borderSize, _borderSize);
 		grid[0][0].create();
-		
+
 		grid[2][0].size = vec2(_borderSize, _borderSize);
 		grid[2][0].position = vec2(_borderSize + width, 0);
 		grid[2][0].create();
-		
+
 		grid[0][2].size = vec2(_borderSize, _borderSize);
 		grid[0][2].position = vec2(0, _borderSize + height);
 		grid[0][2].create();
-		
+
 		grid[2][2].size = vec2(_borderSize, _borderSize);
 		grid[2][2].position = vec2(_borderSize + width, _borderSize + height);
 		grid[2][2].create();
-		
+
 		grid[1][0].size = vec2(width, _borderSize);
 		grid[1][0].position = vec2(_borderSize, 0);
 		grid[1][0].create();
-		
+
 		grid[0][1].size = vec2(_borderSize, height);
 		grid[0][1].position = vec2(0, _borderSize);
 		grid[0][1].create();
-		
+
 		grid[1][2].size = vec2(width, _borderSize);
 		grid[1][2].position = vec2(_borderSize, _borderSize + height);
 		grid[1][2].create();
-		
+
 		grid[2][1].size = vec2(_borderSize, height);
 		grid[2][1].position = vec2(_borderSize + width, _borderSize);
 		grid[2][1].create();
-		
+
 		grid[1][1].size = vec2(width, height);
 		grid[1][1].position = vec2(_borderSize, _borderSize);
 		grid[1][1].create();
