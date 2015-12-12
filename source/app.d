@@ -1,6 +1,7 @@
-import std.stdio;
+module app;
 
-void main()
-{
-	writeln("Edit source/app.d to start your project.");
+import ld34.ld34;
+
+void main() {
+	new LD34().run();
 }

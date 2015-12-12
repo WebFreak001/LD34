@@ -1,0 +1,55 @@
+{
+	"version": "0.1.0",
+	// Run the dub command to do a build or test
+	"command": "dub",
+	// The command is a shell script
+	"isShellCommand": true,
+	// Show the output window only if unrecognized errors occur.
+	"showOutput": "always",
+	"tasks": [
+		{
+			"taskName": "build",
+			"isBuildCommand": true,
+			"isTestCommand": false,
+			"args": [],
+			//Pattern match DMD error messages
+			"problemMatcher": {
+				"owner": "d",
+				"fileLocation": [
+					"relative",
+					"${workspaceRoot}"
+				],
+				"pattern": {
+					"regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(Warning|Error):\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"message": 5
+				}
+			}
+		},
+		{
+			"taskName": "test",
+			"isBuildCommand": false,
+			"isTestCommand": true,
+			"args": [],
+			//Pattern match DMD error messages
+			"problemMatcher": {
+				"owner": "d",
+				"fileLocation": [
+					"relative",
+					"${workspaceRoot}"
+				],
+				"pattern": {
+					"regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(Warning|Error):\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"message": 5
+				}
+			}
+		}
+	]
+}
