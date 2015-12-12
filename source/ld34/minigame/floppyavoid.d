@@ -44,22 +44,24 @@ public:
 			if (time >= spawn) {
 				_spawns = _spawns.remove(i);
 				if (uniform(0, 2) == 0) {
-					_floppies ~= Floppy(RectangleShape.create(_floppyTex, vec2(),
-						vec2(64, 64), vec4(0, 0, 0.25f, 1)), uniform(450, 830), -32, false);
+					_floppies ~= Floppy(RectangleShape.create(_floppyTex,
+						vec2(), vec2(64, 64), vec4(0, 0, 0.25f, 1)), uniform(450, 830),
+						-32, false);
 				} else {
-					_floppies ~= Floppy(RectangleShape.create(_floppyTex, vec2(),
-						vec2(64, 64), vec4(0, 0, 0.25f, 1)), uniform(450, 830), 752, true);
+					_floppies ~= Floppy(RectangleShape.create(_floppyTex,
+						vec2(), vec2(64, 64), vec4(0, 0, 0.25f, 1)), uniform(450, 830),
+						752, true);
 				}
 			}
 		}
-		if(_game.isButtonADown)
+		if (_game.isButtonADown)
 			ballX -= _game.delta * 200;
-		if(_game.isButtonBDown)
+		if (_game.isButtonBDown)
 			ballX += _game.delta * 200;
 		ballX = min(max(ballX, 450), 830);
 		foreach (ref floppy; _floppies)
 			with (floppy) {
-				if(invert)
+				if (invert)
 					y -= _game.delta * 400;
 				else
 					y += _game.delta * 400;
@@ -78,10 +80,10 @@ public:
 			}
 		_ball.position = vec2(ballX - 32, ballY - 32);
 		_game.target.draw(_ball);
-		
+
 		_game.indicatorA.position = vec2(ballX - 32 - 48, ballY - 24);
 		_game.target.draw(_game.indicatorA);
-		
+
 		_game.indicatorB.position = vec2(ballX + 32, ballY - 24);
 		_game.target.draw(_game.indicatorB);
 	}

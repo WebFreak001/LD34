@@ -92,11 +92,11 @@ public:
 			vec2((WindowWidth - 256) * 0.5f, 0), vec2(256, 64));
 
 		_blank = new Texture();
-		_blank.create(1, 1, cast(ubyte[]) [255, 255, 255, 255]);
+		_blank.create(1, 1, cast(ubyte[])[255, 255, 255, 255]);
 
 		_blankShape = RectangleShape.create(_blank, vec2(0, 0), vec2(1, 1));
 		_blendShape = RectangleShape.create(_blank, vec2(0, 0), vec2(WindowWidth, WindowHeight));
-		
+
 		reset();
 	}
 
@@ -285,7 +285,8 @@ public:
 			window.bind();
 			window.clear(Color3.Black);
 			matrixStack.push();
-			matrixStack.top = matrixStack.top.rotate2d(circularin(0.35f, 0, min(1, _time)));
+			matrixStack.top = matrixStack.top.rotate2d(circularin(0.35f, 0, min(1,
+				_time)));
 			matrixStack.top = matrixStack.top.translate2d(0,
 				cubicin(WindowHeight, 0, max(0, _time - 1)));
 			window.draw(_renderQuad);
@@ -295,20 +296,22 @@ public:
 			window.clear(Color3.Black);
 			float offset = 0;
 			float offsetDescription = 0;
-			if(_time > 2)
+			if (_time > 2)
 				offset = -min(1, _time - 2) * 50;
-			if(_time > 2)
+			if (_time > 2)
 				offsetDescription = min(1, _time - 2) * 30;
 			matrixStack.push();
 			matrixStack.top = matrixStack.top.translate2d(
-				(WindowWidth - _gameOverDescription.texture.width) * 0.5f, (WindowHeight - 50) * 0.5f + offsetDescription);
+				(WindowWidth - _gameOverDescription.texture.width) * 0.5f,
+				(WindowHeight - 50) * 0.5f + offsetDescription);
 			_colorTexture.bind();
 			_colorTexture.set("color", vec3(0.5f, 0.5f, 0.5f));
 			window.draw(_gameOverDescription, _colorTexture);
 			matrixStack.pop();
 			matrixStack.push();
 			matrixStack.top = matrixStack.top.translate2d(
-				(WindowWidth - _gameOverText.texture.width) * 0.5f, (WindowHeight - 50) * 0.5f + offset);
+				(WindowWidth - _gameOverText.texture.width) * 0.5f,
+				(WindowHeight - 50) * 0.5f + offset);
 			_colorTexture.bind();
 			_colorTexture.set("color", vec3(Color3.Black));
 			window.draw(_blankShape, _colorTexture);
@@ -489,7 +492,7 @@ private:
 	Sound _sAdvance, _sFaster, _sHPDown, _sHPUp;
 	Texture _blank;
 	RectangleShape _blankShape, _blendShape;
-	
+
 	void newGame() {
 		_currentMinigameIdx++;
 
@@ -522,7 +525,7 @@ private:
 		import ld34.minigame.spamalt : SpamAlternating;
 
 		//_minigames ~= new TestGame(this);
-		//_minigames ~= new AlignAndPull(this);
+		_minigames ~= new AlignAndPull(this);
 		_minigames ~= new Claw(this);
 		_minigames ~= new Climb(this);
 		_minigames ~= new Dance(this);

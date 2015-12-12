@@ -119,12 +119,10 @@ public:
 		_state = ClawState.GoingDown;
 		_target = uniform!TargetBox();
 		_putBoxOnLeft = !!dice(0.5, 0.5);
-		_putBox.position = vec2(_putBoxOnLeft ? 0 : (WindowWidth - 22 * 4),
-			WindowHeight - (9 + 2) * 4);
+		_putBox.position = vec2(_putBoxOnLeft ? 0 : (WindowWidth - 22 * 4), WindowHeight - (9 + 2) * 4);
 		foreach (box; _box)
 			box.position = vec2(uniform(_putBoxOnLeft ? 32 * 4 : 0,
-				WindowWidth - 64 * 4) - (_putBoxOnLeft ? 0 : 32 * 4),
-				WindowHeight - 64 * 4);
+				WindowWidth - 64 * 4) - (_putBoxOnLeft ? 0 : 32 * 4), WindowHeight - 64 * 4);
 		_gotBox = false;
 	}
 

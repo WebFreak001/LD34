@@ -46,7 +46,8 @@ public:
 		);
 		//dfmt on
 
-		_shader = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert", "res/shader/texoffset.frag");
+		_shader = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert",
+			"res/shader/texoffset.frag");
 		_shader.bind();
 		_shader.registerUniform("tex");
 		_shader.registerUniform("color");
@@ -56,7 +57,8 @@ public:
 		_shader.set("tex", 0);
 		_shader.set("color", vec3(1, 1, 1));
 
-		_bgShader = ShaderProgram.fromVertexFragmentFiles("res/shader/background.vert", "res/shader/background.frag");
+		_bgShader = ShaderProgram.fromVertexFragmentFiles("res/shader/background.vert",
+			"res/shader/background.frag");
 		_bgShader.bind();
 		_bgShader.registerUniform("transform");
 		_bgShader.registerUniform("projection");
@@ -102,7 +104,7 @@ public:
 
 	override void draw() {
 		_bgShader.bind();
-		_bgShader.set("offset", vec2(_t*30, _t*100));
+		_bgShader.set("offset", vec2(_t * 30, _t * 100));
 		_game.target.draw(_bg, _bgShader);
 
 		foreach (idx, guy; _guys) {

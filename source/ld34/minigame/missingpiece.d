@@ -244,7 +244,7 @@ public:
 		_game.target.draw(_game.indicatorA);
 		instructionRotate.position = vec2(x * 48 + offsetX + 150, y * 48 + offsetY - 25);
 		_game.target.draw(instructionRotate);
-		
+
 		_game.indicatorB.position = vec2(x * 48 + offsetX + 100, y * 48 + offsetY + 25);
 		_game.target.draw(_game.indicatorB);
 		instructionMove.position = vec2(x * 48 + offsetX + 150, y * 48 + offsetY + 25);

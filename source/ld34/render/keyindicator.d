@@ -22,7 +22,8 @@ public:
 		matrixStack.top = matrixStack.top * transform;
 		background.texture = _pressed ? down : up;
 		background.draw(target, shader);
-		matrixStack.top = matrixStack.top * mat4.translation(24, 20 + (_pressed ? 6 : 0), 0);
+		matrixStack.top = matrixStack.top * mat4.translation(24, 20 + (_pressed ? 6 : 0),
+			0);
 		text.draw(target, shader);
 		matrixStack.pop();
 	}
@@ -31,8 +32,10 @@ public:
 		text.text = key.toUpper;
 		text.position = vec2(-font.measureText(key).x * 0.5f, -font.lineHeight * 0.5f);
 	}
-	
-	@property ref bool pressed() { return _pressed; }
+
+	@property ref bool pressed() {
+		return _pressed;
+	}
 
 private:
 	bool _pressed;

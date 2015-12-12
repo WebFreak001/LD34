@@ -108,7 +108,7 @@ public:
 				_game.target.draw(_game.indicatorB);
 			}
 		}
-		if(isPulling) {
+		if (isPulling) {
 			if (needA) {
 				_game.indicatorA.position = vec2(x - 50 + WindowWidth / 2, -y + WindowHeight / 2);
 				_game.target.draw(_game.indicatorA);
@@ -117,7 +117,7 @@ public:
 				_game.target.draw(_game.indicatorB);
 			}
 		}
-	
+
 		finger.position = vec2(x + WindowWidth / 2, -y + WindowHeight / 2);
 		_game.target.draw(finger);
 

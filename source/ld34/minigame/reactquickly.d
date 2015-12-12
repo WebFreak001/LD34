@@ -44,7 +44,7 @@ public:
 		t += _game.delta;
 		_game.indicatorA.pressed = (cast(int)(t * 5) % 2 == 0);
 		_game.indicatorB.pressed = (cast(int)(t * 5) % 2 == 1);
-		if(_game.isButtonADown || _game.isButtonBDown) {
+		if (_game.isButtonADown || _game.isButtonBDown) {
 			_done = true;
 			_won = true;
 		}
