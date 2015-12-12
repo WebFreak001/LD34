@@ -67,6 +67,9 @@ void main()
 		_currentMinigame.update();
 
 		if (_currentMinigame.isDone) {
+			writeln("isWon: ", _currentMinigame.hasWon);
+			if(!_currentMinigame.hasWon)
+				reduceLife();
 			newGame();
 		}
 	}
@@ -116,10 +119,8 @@ void main()
 	}
 
 	@property Minigame currentMinigame(Minigame minigame) {
-		if (_currentMinigame) {
+		if (_currentMinigame)
 			_currentMinigame.stop();
-			writeln("isWon: ", _currentMinigame.hasWon);
-		}
 
 		_currentMinigame = minigame;
 
@@ -136,6 +137,9 @@ void main()
 
 	@property auto colorTextureShader() {
 		return _colorTexture;
+	}
+	
+	void reduceLife() {
 	}
 
 private:
