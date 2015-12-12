@@ -11,30 +11,30 @@ final class Dance : Minigame {
 public:
 	this(LD34 game) {
 		super(game);
-		spritesheet = new Texture("res/tex/dance/dancers.png",
+		_spritesheet = new Texture("res/tex/dance/dancers.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 		int div = _game.target.width / 4;
 		//dfmt off
 		_guys[0] = Guy(RectangleShape.create(
-			spritesheet,
+			_spritesheet,
 			vec2(div*0 + 64*1, _game.target.height-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0, 0.25, 0.25)
 		), 0);
 		_guys[1] = Guy(RectangleShape.create(
-			spritesheet,
+			_spritesheet,
 			vec2(div*1 + 64*1, _game.target.height-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0.25, 0.25, 0.5)
 		), 0);
 		_guys[2] = Guy(RectangleShape.create(
-			spritesheet,
+			_spritesheet,
 			vec2(div*2 + 64*1, _game.target.height-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0.5, 0.25, 0.75)
 		), 0);
 		_guys[3] = Guy(RectangleShape.create(
-			spritesheet,
+			_spritesheet,
 			vec2(div*3 + 64*1, _game.target.height-64*4),
 			vec2(64*4, 64*4),
 			vec4(0, 0.75, 0.25, 1)
@@ -99,22 +99,22 @@ public:
 		foreach (idx, guy; _guys) {
 			_shader.bind();
 
-			vec2 _texOffset;
+			vec2 texOffset;
 			int frame = cast(int)(_guys[idx].counter * 10) % 6;
 			if (frame == 0)
-				_texOffset = vec2(0, 0);
+				texOffset = vec2(0, 0);
 			else if (frame == 1)
-				_texOffset = vec2(0.25, 0);
+				texOffset = vec2(0.25, 0);
 			else if (frame == 2)
-				_texOffset = vec2(0.50, 0);
+				texOffset = vec2(0.50, 0);
 			else if (frame == 3)
-				_texOffset = vec2(0.75, 0);
+				texOffset = vec2(0.75, 0);
 			else if (frame == 4)
-				_texOffset = vec2(0.50, 0);
+				texOffset = vec2(0.50, 0);
 			else if (frame == 5)
-				_texOffset = vec2(0.25, 0);
+				texOffset = vec2(0.25, 0);
 
-			_shader.set("texOffset", _texOffset);
+			_shader.set("texOffset", texOffset);
 			if (_selected == idx)
 				_shader.set("color", vec3(1, 1, 1));
 			else
@@ -160,7 +160,7 @@ private:
 		float counter;
 	}
 
-	Texture spritesheet;
+	Texture _spritesheet;
 	ShaderProgram _shader;
 	Guy[4] _guys;
 	int _selected;

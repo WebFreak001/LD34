@@ -174,6 +174,7 @@ private:
 	void registerMinigame() {
 		import ld34.minigame.testgame : TestGame;
 		import ld34.minigame.alignandpull : AlignAndPull;
+		import ld34.minigame.claw : Claw;
 		import ld34.minigame.climb : Climb;
 		import ld34.minigame.dance : Dance;
 		import ld34.minigame.dontreact : DontReact;
@@ -192,6 +193,7 @@ private:
 
 		_minigames ~= new TestGame(this);
 		_minigames ~= new AlignAndPull(this);
+		_minigames ~= new Claw(this);
 		_minigames ~= new Climb(this);
 		_minigames ~= new Dance(this);
 		_minigames ~= new DontReact(this);
