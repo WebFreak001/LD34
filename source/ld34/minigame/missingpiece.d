@@ -68,8 +68,19 @@ public:
 
 	override void stop() {
 	}
-	
-	override @property bool hasWon() {
+
+	override @property bool hasWon() const {
+		int linesCleared = 0;
+		LineLoop: for (int i = 0; i < blocks.length; i++) {
+			for (int x = 0; x < blocks[i].length; x++)
+				if (blocks[i][x] == 0)
+					continue LineLoop;
+			linesCleared++;
+		}
+		return linesCleared > 1;
+	}
+
+	void placeBlock() {
 		setBlock(x, y, 5);
 		switch (rota) {
 		case 3:
@@ -95,14 +106,6 @@ public:
 		default:
 			break;
 		}
-		int linesCleared = 0;
-		LineLoop: for (int i = 0; i < blocks.length; i++) {
-			for (int x = 0; x < blocks[i].length; x++)
-				if (blocks[i][x] == 0)
-					continue LineLoop;
-			linesCleared++;
-		}
-		return linesCleared > 1;
 	}
 
 	override void update() {
@@ -121,6 +124,7 @@ public:
 		if (!canFit(x, y + 1, rota))
 			blockTime += _game.delta;
 		if (blockTime >= 0.4f) {
+			placeBlock();
 			_done = true;
 		}
 		wasADown = _game.isButtonADown;
@@ -207,7 +211,7 @@ public:
 
 		for (int y = 0; y < inventory.length; y++) {
 			for (int x = 0; x < inventory[0].length; x++) {
-				if(inventory[y][x] == 0)
+				if (inventory[y][x] == 0)
 					continue;
 				tetrisBlock.position = vec2(x * 48 + offsetX + 524, y * 48 + offsetY - 376);
 				_game.colorTextureShader.bind();

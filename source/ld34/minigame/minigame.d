@@ -25,7 +25,7 @@ public:
 		return _done;
 	}
 
-	@property bool hasWon() {
+	@property bool hasWon() const {
 		return _won;
 	}
 
