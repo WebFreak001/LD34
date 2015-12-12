@@ -24,43 +24,17 @@ public:
 	override void load() {
 		_font = new TTFFont();
 		_font.load("res/font/Roboto-Regular.ttf", 64);
-		
+
 		auto key = new Texture("res/tex/generic/key.png", TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 		_indicatorA = new KeyIndicator("<", _font, key);
 		_indicatorB = new KeyIndicator(">", _font, key);
-		
+
 		registerMinigame();
 		_currentMinigameIdx = 0;
 		currentMinigame = _minigames[_currentMinigameIdx];
 
-		_colorTexture = new ShaderProgram();
-		Shader vertex = new Shader();
-		vertex.load(ShaderType.Vertex, "#version 330
-layout(location = 0) in vec3 in_position;
-layout(location = 1) in vec2 in_tex;
-uniform mat4 transform;
-uniform mat4 projection;
-out vec2 texCoord;
-void main()
-{
-	gl_Position = projection * transform * vec4(in_position, 1);
-	texCoord = in_tex;
-}
-");
-		Shader fragment = new Shader();
-		fragment.load(ShaderType.Fragment, "#version 330
-uniform sampler2D tex;
-uniform vec3 color;
-in vec2 texCoord;
-layout(location = 0) out vec4 out_frag_color;
-void main()
-{
-	out_frag_color = texture(tex, texCoord) * vec4(color, 1);
-}
-");
-		_colorTexture.attach(vertex);
-		_colorTexture.attach(fragment);
-		_colorTexture.link();
+		_colorTexture = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert",
+			"res/shader/base.frag");
 		_colorTexture.bind();
 		_colorTexture.registerUniform("tex");
 		_colorTexture.registerUniform("color");
@@ -76,7 +50,7 @@ void main()
 
 		if (_currentMinigame.isDone) {
 			writeln("isWon: ", _currentMinigame.hasWon);
-			if(!_currentMinigame.hasWon)
+			if (!_currentMinigame.hasWon)
 				reduceLife();
 			newGame();
 		}
@@ -146,18 +120,18 @@ void main()
 	@property auto colorTextureShader() {
 		return _colorTexture;
 	}
-	
+
 	void reduceLife() {
 	}
-	
+
 	@property TTFFont font() {
 		return _font;
 	}
-	
+
 	@property KeyIndicator indicatorA() {
 		return _indicatorA;
 	}
-	
+
 	@property KeyIndicator indicatorB() {
 		return _indicatorB;
 	}
