@@ -7,3 +7,4 @@ __dummy.html
 dub.selections.json
 
 docFolder
+*.xcf
