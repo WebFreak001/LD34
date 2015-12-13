@@ -157,6 +157,7 @@ public:
 		_sFaster = new Sound("res/sound/faster.wav");
 		_sHPDown = new Sound("res/sound/hpdown.wav");
 		_sHPUp = new Sound("res/sound/hpup.wav");
+		_sBoss = new Sound("res/sound/boss.wav");
 
 		auto key = new Texture("res/tex/generic/key.png",
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
@@ -280,6 +281,7 @@ public:
 					_state = BossShow;
 					_difficulty++;
 					_wasBoss = true;
+					_sBoss.play(0, 4);
 				} else if (game % 4 == 0)
 					increaseSpeed();
 				else
@@ -670,7 +672,7 @@ private:
 	float _time = 0;
 	float _speed = 1;
 	GameState _state = GameState.MenuStart;
-	Sound _sAdvance, _sFaster, _sHPDown, _sHPUp;
+	Sound _sAdvance, _sFaster, _sHPDown, _sHPUp, _sBoss;
 	Texture _blank;
 	RectangleShape _blankShape, _blendShape;
 

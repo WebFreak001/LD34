@@ -17,7 +17,6 @@ public:
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 		//dfmt off
 		pipes = [
-			RectangleShape.create(pipe, vec2(1000, -44), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(1400, -80), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(1800, -130), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(2200, -10), vec2(64, 256), vec4(0, 1, 1, 0)),
@@ -29,8 +28,12 @@ public:
 			RectangleShape.create(pipe, vec2(4600, -80), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(5000, -130), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(5400, -10), vec2(64, 256), vec4(0, 1, 1, 0)),
+			RectangleShape.create(pipe, vec2(5800, -10), vec2(64, 256), vec4(0, 1, 1, 0)),
+			RectangleShape.create(pipe, vec2(6200, -44), vec2(64, 256), vec4(0, 1, 1, 0)),
+			RectangleShape.create(pipe, vec2(6600, -80), vec2(64, 256), vec4(0, 1, 1, 0)),
+			RectangleShape.create(pipe, vec2(7000, -130), vec2(64, 256), vec4(0, 1, 1, 0)),
+			RectangleShape.create(pipe, vec2(7400, -10), vec2(64, 256), vec4(0, 1, 1, 0)),
 
-			RectangleShape.create(pipe, vec2(1000, WindowHeight - 164), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1400, WindowHeight - 200), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1800, WindowHeight - 250), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(2200, WindowHeight - 130), vec2(64, 256), vec4(0, 0, 1, 1)),
@@ -42,6 +45,11 @@ public:
 			RectangleShape.create(pipe, vec2(4600, WindowHeight - 200), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(5000, WindowHeight - 250), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(5400, WindowHeight - 130), vec2(64, 256), vec4(0, 0, 1, 1)),
+			RectangleShape.create(pipe, vec2(5800, WindowHeight - 130), vec2(64, 256), vec4(0, 0, 1, 1)),
+			RectangleShape.create(pipe, vec2(6200, WindowHeight - 164), vec2(64, 256), vec4(0, 0, 1, 1)),
+			RectangleShape.create(pipe, vec2(6600, WindowHeight - 200), vec2(64, 256), vec4(0, 0, 1, 1)),
+			RectangleShape.create(pipe, vec2(7000, WindowHeight - 250), vec2(64, 256), vec4(0, 0, 1, 1)),
+			RectangleShape.create(pipe, vec2(7400, WindowHeight - 130), vec2(64, 256), vec4(0, 0, 1, 1)),
 		];
 		//dfmt on
 	}
