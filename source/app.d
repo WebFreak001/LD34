@@ -45,7 +45,7 @@ immutable string[] things = [
 ];
 
 string generateUsername() {
-	return adjectives[uniform(0, adjectives.length)] ~ ' ' ~ colors[uniform(0, colors.length)] ~ ' ' ~ things[uniform(0, things.length)];
+	return adjectives[uniform(0, adjectives.length)] ~ colors[uniform(0, colors.length)] ~ things[uniform(0, things.length)];
 }
 
 void main(string[] args) {
