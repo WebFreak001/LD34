@@ -112,7 +112,7 @@ public:
 	}
 
 	@property override Duration getPlayTime() const {
-		return 60.seconds;
+		return 10.seconds;
 	}
 
 private:
