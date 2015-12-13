@@ -29,7 +29,7 @@ public:
 			RectangleShape.create(pipe, vec2(4600, -100), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(5000, -150), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(5400, -30), vec2(64, 256), vec4(0, 1, 1, 0)),
-			
+
 			RectangleShape.create(pipe, vec2(1000, WindowHeight - 164), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1400, WindowHeight - 200), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1800, WindowHeight - 250), vec2(64, 256), vec4(0, 0, 1, 1)),
@@ -61,9 +61,9 @@ public:
 
 	override void update() {
 		t += _game.delta;
-		if(t < 0.001666f)
+		if(t <= 0.001666f)
 			return;
-		t = 0;
+		t -= 0.001666f;
 		if (_game.isButtonADown)
 			xv += 0.001f;
 		if (_game.isButtonBDown)
