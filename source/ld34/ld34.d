@@ -1,5 +1,7 @@
 module ld34.ld34;
 
+version = HasScoreboard;
+
 import d2d;
 
 import std.algorithm;
@@ -25,6 +27,7 @@ enum GameState {
 	GameOver,
 	MenuStart,
 	Menu,
+	BossShow,
 	FasterAnnounceShow,
 	ControlsShow,
 	Game,
@@ -39,68 +42,77 @@ static double circularin(double delta, double offset, double time) {
 	return -delta * (sqrt(1 - time * time) - 1) + offset;
 }
 
-struct ScoreboardEntry {
-	string name;
-	long score;
-}
-
-shared ScoreboardEntry[] scoreboard;
-shared long[] toSubmit;
-
-ScoreboardThread scoreboardThread;
-
-class ScoreboardThread : Thread {
-	string username;
-	bool running;
-	this(string username) {
-		super(&run);
-		this.username = username;
-		running = true;
-	}
-	
-	void stop() {
-		running = false;
+version (HasScoreboard) {
+	struct ScoreboardEntry {
+		string name;
+		long score;
 	}
 
-private:
-	void run() {
-		try {
-			while(running) {
-				try {
-					parseScoreboard(cast(string) get("score.webfreak.org/leaderboard"));
-					
-					if(toSubmit.length > 0) {
-						string last;
-						foreach(entry; toSubmit) {
-							string data = JSONValue(["name": JSONValue(username), "score": JSONValue(entry)]).toString();
-							HTTP http = HTTP();
-							http.addRequestHeader("Content-Type", "application/json");
-							last = cast(string) post("score.webfreak.org/score", cast(ubyte[]) data, http);
+	shared ScoreboardEntry[] scoreboard;
+	shared long[] toSubmit;
+	shared bool updatedScoreboard = true;
+
+	ScoreboardThread scoreboardThread;
+
+	class ScoreboardThread : Thread {
+		string username;
+		bool running;
+		this(string username) {
+			super(&run);
+			this.username = username;
+			running = true;
+		}
+
+		void stop() {
+			running = false;
+		}
+
+	private:
+		void run() {
+			try {
+				while (running) {
+					try {
+						parseScoreboard(cast(string) get("score.webfreak.org/leaderboard"));
+
+						if (toSubmit.length > 0) {
+							string last;
+							foreach (entry; toSubmit) {
+								string data = JSONValue(["name" : JSONValue(username),
+									"score" : JSONValue(entry)]).toString();
+								HTTP http = HTTP();
+								http.addRequestHeader("Content-Type", "application/json");
+								last = cast(string) post("score.webfreak.org/score",
+									cast(ubyte[]) data, http);
+							}
+							parseScoreboard(last);
+							toSubmit = [];
 						}
-						parseScoreboard(last);
-						toSubmit = [];
 					}
-				} catch(Exception e) {
-					writeln("Exception in scoreboard thread: ", e);
-					Thread.sleep(10.seconds);
-				} catch(AssertError e) {
-					writeln("AssertError in scoreboard thread: ", e);
+					catch (Exception e) {
+						writeln("Exception in scoreboard thread: ", e);
+						Thread.sleep(10.seconds);
+					}
+					catch (AssertError e) {
+						writeln("AssertError in scoreboard thread: ", e);
+						Thread.sleep(10.seconds);
+					}
 					Thread.sleep(10.seconds);
 				}
-				Thread.sleep(10.seconds);
 			}
-		} catch(Throwable t) {
-			writeln("Fatal exception in scoreboard thread: ", t);
+			catch (Throwable t) {
+				writeln("Fatal exception in scoreboard thread: ", t);
+			}
 		}
-	}
-	
-	void parseScoreboard(string content) {
-		auto json = parseJSON(content);
-		assert(json.type == JSON_TYPE.ARRAY);
-		
-		scoreboard = [];
-		foreach(entry; json.array) {
-			scoreboard ~= ScoreboardEntry(entry["name"].str, cast(long) entry["score"].integer);
+
+		void parseScoreboard(string content) {
+			auto json = parseJSON(content);
+			assert(json.type == JSON_TYPE.ARRAY);
+
+			scoreboard = [];
+			foreach (entry; json.array) {
+				scoreboard ~= ScoreboardEntry(entry["name"].str, cast(long) entry["score"].integer);
+			}
+			updatedScoreboard = true;
 		}
 	}
 }
@@ -108,8 +120,10 @@ private:
 class LD34 : Game {
 public:
 	this(string username) {
-		scoreboardThread = new ScoreboardThread(username);
-		scoreboardThread.start();
+		version (HasScoreboard) {
+			scoreboardThread = new ScoreboardThread(username);
+			scoreboardThread.start();
+		}
 	}
 
 	override void start() {
@@ -127,12 +141,17 @@ public:
 		_font.load("res/font/Roboto-Regular.ttf", 64);
 		_faster = new TTFText(_font);
 		_faster.text = "FASTER!";
+		_boss = new TTFText(_font);
+		_boss.text = "BOSS!";
 		_gameOverText = new TTFText(_font);
 		_gameOverText.text = "Game Over! Your Score: ???";
 		_gameOverDescription = new TTFText(_font);
 		_gameOverDescription.text = "Press any key to continue...";
 		_startDescription = new TTFText(_font);
 		_startDescription.text = "PRESS ANY KEY";
+		_scoreboardDescription = new TTFText(_font);
+		_scoreboardDescription.text = "Unreliable last 10 global Scores:";
+		_scoreboard = new TTFText(_font);
 
 		_sAdvance = new Sound("res/sound/advance.wav");
 		_sFaster = new Sound("res/sound/faster.wav");
@@ -202,6 +221,8 @@ public:
 		_gameTimer.reset();
 		_time = 0;
 		_speed = 1;
+		_difficulty = 0;
+		_wasBoss = false;
 		randomizeKeys();
 		updateHealth();
 		_currentMinigameIdx = 0;
@@ -214,6 +235,12 @@ public:
 		_time += delta;
 		final switch (_state) with (GameState) {
 		case FasterAnnounceShow:
+			if (_time > 1.0f) {
+				_state = ControlsShow;
+				_time = 0;
+			}
+			break;
+		case BossShow:
 			if (_time > 1.0f) {
 				_state = ControlsShow;
 				_time = 0;
@@ -236,7 +263,10 @@ public:
 				if (!_currentMinigame.hasWon)
 					reduceLife();
 				else
-					_sAdvance.play(0, 0);
+					if (_wasBoss)
+						increaseHP();
+					else
+						_sAdvance.play(0, 0);
 				if (_health > 0)
 					_state = GameEnd;
 				_time = 0;
@@ -245,7 +275,12 @@ public:
 		case GameEnd:
 			if (_time > 0.5f) {
 				_currentMinigame.stop();
-				if (game % 4 == 0)
+				_wasBoss = false;
+				if (game % 7 == 0) {
+					_state = BossShow;
+					_difficulty++;
+					_wasBoss = true;
+				} else if (game % 4 == 0)
 					increaseSpeed();
 				else
 					_state = ControlsShow;
@@ -258,12 +293,26 @@ public:
 				_state = GameOver;
 				_time = 0;
 				_gameOverText.text = "Game Over! Your Score: " ~ to!string(totalScore);
-				toSubmit ~= cast(long) totalScore;
+				version (HasScoreboard) {
+					toSubmit ~= cast(long) totalScore;
+					if (updatedScoreboard) {
+						updatedScoreboard = false;
+						string str = "";
+						if (scoreboard.length) {
+							foreach (entry; scoreboard) {
+								str ~= entry.name ~ ": " ~ to!string(entry.score) ~ '\n';
+							}
+						} else {
+							str = "No highscores yet! :(";
+						}
+						_scoreboard.text = str;
+						_scoreboard.multiline = true;
+					}
+				}
 				_blankShape.position = _gameOverText.position;
 				_blankShape.size = _gameOverText.size;
 				_blankShape.create();
 				reset();
-				writeln("Scoreboard: ", scoreboard);
 			}
 			break;
 		case GameOver:
@@ -319,6 +368,19 @@ public:
 	override void draw() {
 		window.clear(Color3.White);
 		final switch (_state) with (GameState) {
+		case BossShow:
+			matrixStack.push();
+			matrixStack.top = matrixStack.top.translate2d(
+				(WindowWidth - _boss.texture.width) * 0.5f, (WindowHeight + 100) * _time - 50);
+			_colorTexture.bind();
+			_colorTexture.set("color", vec3(0, 0, 0));
+			window.draw(_boss, _colorTexture);
+			matrixStack.pop();
+			matrixStack.push();
+			matrixStack.top = matrixStack.top.translate2d(0, 20);
+			window.draw(_healthBar);
+			matrixStack.pop();
+			break;
 		case FasterAnnounceShow:
 			matrixStack.push();
 			matrixStack.top = matrixStack.top.translate2d(
@@ -409,6 +471,17 @@ public:
 			_colorTexture.set("color", vec3(1, 1, 1));
 			window.draw(_gameOverText, _colorTexture);
 			matrixStack.pop();
+
+			version (HasScoreboard) {
+				matrixStack.push();
+				matrixStack.top = matrixStack.top.scale2d(0.3f, 0.3f).translate2d(200,
+					WindowHeight * 0.5f + 100);
+				_scoreboardDescription.position = vec2(0, 0);
+				window.draw(_scoreboardDescription);
+				_scoreboard.position = vec2(0, 64);
+				window.draw(_scoreboard);
+				matrixStack.pop();
+			}
 			break;
 		case MenuStart:
 			float opacity = circularin(-1, 1, _time * 2);
@@ -465,7 +538,10 @@ public:
 		game++;
 
 		if (_currentMinigame) {
-			_currentMinigame.start(game / 5);
+			if(_state == GameState.BossShow)
+				_currentMinigame.start(_difficulty + 4);
+			else
+				_currentMinigame.start(_difficulty);
 			_gameTimer.start();
 		}
 		return _currentMinigame;
@@ -473,6 +549,8 @@ public:
 
 	@property IRenderTarget target() {
 		final switch (_state) with (GameState) {
+		case BossShow:
+			return _renderTex;
 		case FasterAnnounceShow:
 			return _renderTex;
 		case ControlsShow:
@@ -503,6 +581,12 @@ public:
 	void reduceLife() {
 		_sHPDown.play(0, 1);
 		_health--;
+		updateHealth();
+	}
+	
+	void increaseHP() {
+		_sHPUp.play(0, 3);
+		_health++;
 		updateHealth();
 	}
 
@@ -567,13 +651,16 @@ private:
 	int _buttonB;
 	bool _buttonADown;
 	bool _buttonBDown;
+	bool _wasBoss;
+	int _difficulty = 1;
 	TTFFont _font;
-	TTFText _faster, _gameOverText, _gameOverDescription, _startDescription;
+	TTFText _faster, _boss, _gameOverText, _gameOverDescription,
+		_startDescription, _latestScores, _scoreboardDescription, _scoreboard;
 	KeyIndicator _indicatorA;
 	KeyIndicator _indicatorB;
 	Minigame[] _minigames;
 	Minigame _currentMinigame;
-	ulong _currentMinigameIdx;
+	size_t _currentMinigameIdx;
 	int game = 0;
 	ShaderProgram _colorTexture, _textureOffset;
 	StopWatch _gameTimer;
