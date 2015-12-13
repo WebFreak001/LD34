@@ -78,11 +78,11 @@ public:
 		if (isPulling) {
 			if (_game.isButtonADown && !aDown && needA) {
 				needA = !needA;
-				strength += 0.2f / _difficulty;
+				strength += 0.2f;
 			}
 			if (_game.isButtonBDown && !bDown && !needA) {
 				needA = !needA;
-				strength += 0.2f / _difficulty;
+				strength += 0.2f;
 			}
 			strength = min(strength, 1);
 			cucumberX = x;

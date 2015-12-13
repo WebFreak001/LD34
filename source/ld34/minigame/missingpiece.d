@@ -50,29 +50,41 @@ public:
 		y = -8;
 		rota = 0;
 		//dfmt off
+		inventory = [
+			[0, 6, 0],
+			[6, 6, 6],
+			[0, 0, 0],
+			[0, 1, 0],
+			[0, 1, 0],
+			[0, 1, 0],
+			[0, 1, 0],
+			[0, 0, 0],
+			[3, 0, 0],
+			[3, 3, 3],
+		];
 		switch (difficulty) {
+		case 3: .. case 5:
+			blocks = [
+				[0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+				[1, 1, 1, 2, 0, 0, 0, 0, 1, 0],
+				[1, 6, 2, 2, 0, 0, 1, 1, 1, 0],
+				[6, 6, 3, 3, 0, 0, 0, 2, 2, 2],
+				[1, 6, 3, 3, 6, 9, 0, 0, 6, 2],
+				[1, 4, 4, 6, 6, 9, 9, 6, 6, 6],
+				[1, 1, 4, 4, 6, 9, 5, 5, 5, 5],
+			];
+			break;
 		default:
 			blocks = [
 				[3, 3, 3, 0, 0, 0, 0, 0, 0, 0],
 				[7, 7, 3, 5, 5, 5, 0, 0, 0, 1],
-				[1, 7, 7, 5, 6, 0, 0, 0, 6, 1],
-				[1, 2, 2, 6, 6, 3, 0, 6, 6, 1],
-			];
-			inventory = [
-				[0, 6, 0],
-				[6, 6, 6],
-				[0, 0, 0],
-				[0, 1, 0],
-				[0, 1, 0],
-				[0, 1, 0],
-				[0, 1, 0],
-				[0, 0, 0],
-				[3, 0, 0],
-				[3, 3, 3],
+				[1, 7, 7, 5, 6, 9, 9, 9, 6, 1],
+				[1, 2, 2, 6, 6, 3, 9, 6, 6, 1],
 			];
 			break;
 		}
 		//dfmt on
+		offsetY = WindowHeight - cast(int)blocks.length * 48 - 52;
 	}
 
 	override void stop() {
@@ -82,7 +94,7 @@ public:
 		int linesCleared = 0;
 		LineLoop: for (int i = 0; i < blocks.length; i++) {
 			for (int x = 0; x < blocks[i].length; x++)
-				if (blocks[i][x] == 0)
+				if (!collides(x, i))
 					continue LineLoop;
 			linesCleared++;
 		}
@@ -146,42 +158,57 @@ public:
 	}
 
 	void moveRight() {
-		if (canFit(x + 1, y, rota))
+		if (canFit(x + 1, y, rota)) {
 			x++;
-	}
-
-	void rotateRight() {
-		if (canFit(x, y, (rota + 1) % 4))
-			rota = (rota + 1) % 4;
-		else if (canFit(x, y + 1, (rota + 1) % 4)) {
-			y++;
-			rota = (rota + 1) % 4;
-		} else if (canFit(x, y - 1, (rota + 1) % 4)) {
-			y--;
-			rota = (rota + 1) % 4;
+			blockTime -= 0.02f;
 		}
 	}
 
-	bool canFit(int x, int y, int rota) {
+	void rotateRight() {
+		if (canFit(x, y, (rota + 1) % 4)) {
+			rota = (rota + 1) % 4;
+			blockTime -= 0.03f;
+		} else if (canFit(x, y + 1, (rota + 1) % 4)) {
+			y++;
+			rota = (rota + 1) % 4;
+			blockTime -= 0.03f;
+		} else if (canFit(x, y - 1, (rota + 1) % 4)) {
+			y--;
+			rota = (rota + 1) % 4;
+			blockTime -= 0.03f;
+		}
+	}
+
+	bool canFit(int x, int y, int rota) const {
 		switch (rota) {
 		case 3:
-			return getBlock(x - 1, y) == 0 && getBlock(x + 1, y) == 0
-				&& getBlock(x, y) == 0 && getBlock(x, y - 1) == 0;
+			return !collides(x - 1, y) && !collides(x + 1, y)
+				&& !collides(x, y) && !collides(x, y - 1);
 		case 2:
-			return getBlock(x - 1, y) == 0 && getBlock(x, y - 1) == 0
-				&& getBlock(x, y) == 0 && getBlock(x, y + 1) == 0;
+			return !collides(x - 1, y) && !collides(x, y - 1)
+				&& !collides(x, y) && !collides(x, y + 1);
 		case 1:
-			return getBlock(x - 1, y) == 0 && getBlock(x + 1, y) == 0
-				&& getBlock(x, y) == 0 && getBlock(x, y + 1) == 0;
+			return !collides(x - 1, y) && !collides(x + 1, y)
+				&& !collides(x, y) && !collides(x, y + 1);
 		case 0:
-			return getBlock(x + 1, y) == 0 && getBlock(x, y - 1) == 0
-				&& getBlock(x, y) == 0 && getBlock(x, y + 1) == 0;
+			return !collides(x + 1, y) && !collides(x, y - 1)
+				&& !collides(x, y) && !collides(x, y + 1);
 		default:
 			return false;
 		}
 	}
 
-	ubyte getBlock(int x, int y) {
+	bool collides(int x, int y) const {
+		if (x < 0 || y >= cast(int) blocks.length || x >= cast(int) blocks[0].length)
+			return true;
+		if (y < 0)
+			return false;
+		if (blocks[y][x] == 9)
+			return false;
+		return blocks[y][x] != 0;
+	}
+
+	ubyte getBlock(int x, int y) const {
 		if (x < 0 || y >= cast(int) blocks.length || x >= cast(int) blocks[0].length)
 			return ubyte.max;
 		if (y < 0)
@@ -195,7 +222,7 @@ public:
 		blocks[y][x] = type;
 	}
 
-	vec3 getColor(int x, int y) {
+	vec3 getColor(int x, int y) const {
 		if (x < 0 || y < 0 || y >= cast(int) blocks.length || x >= cast(int) blocks[0].length)
 			return vec3(0, 0, 0);
 		if (blocks[y][x] >= 0 && blocks[y][x] < 8) {
@@ -204,7 +231,7 @@ public:
 		return vec3(0, 0, 0);
 	}
 
-	vec3 getColor(ubyte b) {
+	vec3 getColor(ubyte b) const {
 		if (b >= colors.length)
 			return vec3(0, 0, 0);
 		auto color = colors[b];
@@ -213,8 +240,8 @@ public:
 
 	override void draw() {
 		_game.target.clear(0.15f, 0.15f, 0.15f);
-		borderLeft.position = vec2(offsetX + (480 - 500) * 0.5f, offsetY - 400);
-		borderRight.position = vec2(offsetX + (480 - 500) * 0.5f + 510, offsetY - 400);
+		borderLeft.position = vec2(offsetX + (480 - 500) * 0.5f, 80);
+		borderRight.position = vec2(offsetX + (480 - 500) * 0.5f + 510, 80);
 		_game.target.draw(borderLeft);
 		_game.target.draw(borderRight);
 
@@ -222,7 +249,7 @@ public:
 			for (int x = 0; x < inventory[0].length; x++) {
 				if (inventory[y][x] == 0)
 					continue;
-				tetrisBlock.position = vec2(x * 48 + offsetX + 524, y * 48 + offsetY - 376);
+				tetrisBlock.position = vec2(x * 48 + offsetX + 524, y * 48 + 100);
 				_game.colorTextureShader.bind();
 				_game.colorTextureShader.set("color", getColor(inventory[y][x]));
 				_game.target.draw(tetrisBlock, _game.colorTextureShader);
@@ -235,7 +262,14 @@ public:
 					tetrisBlock.position = vec2(x * 48 + offsetX, y * 48 + offsetY);
 					_game.colorTextureShader.bind();
 					_game.colorTextureShader.set("color", getColor(x, y));
-					_game.target.draw(tetrisBlock, _game.colorTextureShader);
+					if (getBlock(x, y) == 9) {
+						_game.colorTextureShader.set("opacity", 0.3f);
+						_game.colorTextureShader.set("color", playerColor);
+						_game.target.draw(tetrisBlock, _game.colorTextureShader);
+						_game.colorTextureShader.set("opacity", 1.0f);
+					} else {
+						_game.target.draw(tetrisBlock, _game.colorTextureShader);
+					}
 				}
 			}
 		}

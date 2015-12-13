@@ -70,7 +70,7 @@ public:
 		aDown = false;
 		bDown = false;
 		active.length = 0;
-		needed = 50 + difficulty * 5;
+		needed = min(80, 50 + difficulty * 5);
 		active.reserve(100);
 		t = 0;
 		done = false;
