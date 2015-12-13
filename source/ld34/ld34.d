@@ -143,7 +143,6 @@ public:
 			auto t = _currentMinigame.getPlayTime;
 			t = dur!"nsecs"(cast(long)(t.total!"nsecs" / _speed));
 			if (_currentMinigame.isDone || _gameTimer.peek.to!Duration >= t) {
-				_currentMinigame.stop();
 				_gameTimer.stop();
 				_gameTimer.reset();
 				if (!_currentMinigame.hasWon)
@@ -157,6 +156,7 @@ public:
 			break;
 		case GameEnd:
 			if (_time > 0.5f) {
+				_currentMinigame.stop();
 				if (game % 4 == 0)
 					increaseSpeed();
 				else
@@ -541,7 +541,7 @@ private:
 		//_minigames ~= new Rescue(this);
 		//_minigames ~= new Selfie(this);
 		//_minigames ~= new Simon(this);
-		//_minigames ~= new SpamAlternating(this);
+		_minigames ~= new SpamAlternating(this);
 
 		randomShuffle(_minigames);
 	}
