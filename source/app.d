@@ -9,8 +9,47 @@ import std.stdio;
 import std.conv;
 import std.c.stdlib;
 
+immutable string[] adjectives = [
+	"Quick",
+	"Slow",
+	"Bad",
+	"Good",
+	"Drunken",
+	"Advanced",
+	"Dark",
+	"Light",
+	"Super",
+];
+
+immutable string[] colors = [
+	"Red",
+	"Pink",
+	"Green",
+	"Yellow",
+	"Orange",
+	"Purple",
+	"Cyan",
+];
+
+immutable string[] things = [
+	"Potato",
+	"Tomato",
+	"Cucumber",
+	"Pickle",
+	"Tetromino",
+	"Car",
+	"Picture",
+	"Terminal",
+	"Webbrowser",
+	"Block",
+];
+
+string generateUsername() {
+	return adjectives[uniform(0, adjectives.length)] ~ ' ' ~ colors[uniform(0, colors.length)] ~ ' ' ~ things[uniform(0, things.length)];
+}
+
 void main(string[] args) {
-	string username = "Anon#" ~ to!string(uniform(uint.min, uint.max));
+	string username = generateUsername();
 	getopt(args, "u|user|username", &username);
 	new LD34(username).run();
 	version(HasScoreboard) {
