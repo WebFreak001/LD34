@@ -50,8 +50,9 @@ public:
 		super.start(difficulty);
 		x = 200;
 		y = 200;
-		xv = 0.01f;
+		xv = 1;
 		yv = 0.002f;
+		t = 0;
 		_won = true;
 	}
 
@@ -59,6 +60,9 @@ public:
 	}
 
 	override void update() {
+		t += _game.delta;
+		if(t < 0.1666f)
+			return;
 		if (_game.isButtonADown)
 			xv += 0.001f;
 		if (_game.isButtonBDown)
@@ -104,6 +108,6 @@ public:
 private:
 	RectangleShape heli;
 	RectangleShape[] pipes;
-	float x, y;
+	float x, y, t;
 	float xv, yv;
 }
