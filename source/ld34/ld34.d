@@ -538,7 +538,7 @@ public:
 		game++;
 
 		if (_currentMinigame) {
-			if(_state == GameState.BossShow)
+			if(_wasBoss)
 				_currentMinigame.start(_difficulty + 4);
 			else
 				_currentMinigame.start(_difficulty);
