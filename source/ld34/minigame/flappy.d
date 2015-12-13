@@ -61,8 +61,9 @@ public:
 
 	override void update() {
 		t += _game.delta;
-		if(t < 0.1666f)
+		if(t < 0.001666f)
 			return;
+		t = 0;
 		if (_game.isButtonADown)
 			xv += 0.001f;
 		if (_game.isButtonBDown)
