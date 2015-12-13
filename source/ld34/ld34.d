@@ -82,6 +82,17 @@ public:
 		_colorTexture.set("tex", 0);
 		_colorTexture.set("opacity", 1);
 		_colorTexture.set("color", vec3(1, 1, 1));
+		
+		_textureOffset = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert",
+			"res/shader/texoffset.frag");
+		_textureOffset.bind();
+		_textureOffset.registerUniform("tex");
+		_textureOffset.registerUniform("color");
+		_textureOffset.registerUniform("transform");
+		_textureOffset.registerUniform("projection");
+		_textureOffset.registerUniform("texOffset");
+		_textureOffset.set("tex", 0);
+		_textureOffset.set("color", vec3(1, 1, 1));
 
 		_renderTex = new RenderTexture(WindowWidth, WindowHeight);
 		_renderQuad = RectangleShape.create(_renderTex.texture, vec2(0, 0),
@@ -405,6 +416,10 @@ public:
 	@property auto colorTextureShader() {
 		return _colorTexture;
 	}
+	
+	@property auto textureOffsetShader() {
+		return _textureOffset;
+	}
 
 	void reduceLife() {
 		_sHPDown.play(0, 1);
@@ -481,7 +496,7 @@ private:
 	Minigame _currentMinigame;
 	ulong _currentMinigameIdx;
 	int game = 0;
-	ShaderProgram _colorTexture;
+	ShaderProgram _colorTexture, _textureOffset;
 	StopWatch _gameTimer;
 	RenderTexture _renderTex;
 	RectangleShape _renderQuad;
@@ -538,7 +553,7 @@ private:
 		//_minigames ~= new QWOP(this);
 		//_minigames ~= new Racer(this);
 		_minigames ~= new ReactQuickly(this);
-		//_minigames ~= new Rescue(this);
+		_minigames ~= new Rescue(this);
 		//_minigames ~= new Selfie(this);
 		//_minigames ~= new Simon(this);
 		_minigames ~= new SpamAlternating(this);

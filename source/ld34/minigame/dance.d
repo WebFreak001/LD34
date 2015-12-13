@@ -46,17 +46,6 @@ public:
 		);
 		//dfmt on
 
-		_shader = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert",
-			"res/shader/texoffset.frag");
-		_shader.bind();
-		_shader.registerUniform("tex");
-		_shader.registerUniform("color");
-		_shader.registerUniform("transform");
-		_shader.registerUniform("projection");
-		_shader.registerUniform("texOffset");
-		_shader.set("tex", 0);
-		_shader.set("color", vec3(1, 1, 1));
-
 		_bgShader = ShaderProgram.fromVertexFragmentFiles("res/shader/background.vert",
 			"res/shader/background.frag");
 		_bgShader.bind();
@@ -108,7 +97,7 @@ public:
 		_game.target.draw(_bg, _bgShader);
 
 		foreach (idx, guy; _guys) {
-			_shader.bind();
+			_game.textureOffsetShader.bind();
 
 			vec2 texOffset;
 			int frame = cast(int)(_guys[idx].counter * 10) % 6;
@@ -125,12 +114,12 @@ public:
 			else if (frame == 5)
 				texOffset = vec2(0.25, 0);
 
-			_shader.set("texOffset", texOffset);
+			_game.textureOffsetShader.set("texOffset", texOffset);
 			if (_selected == idx)
-				_shader.set("color", vec3(1, 1, 1));
+				_game.textureOffsetShader.set("color", vec3(1, 1, 1));
 			else
-				_shader.set("color", vec3(0.5, 0.5, 0.5));
-			_game.target.draw(_guys[idx].tex, _shader);
+				_game.textureOffsetShader.set("color", vec3(0.5, 0.5, 0.5));
+			_game.target.draw(_guys[idx].tex, _game.textureOffsetShader);
 		}
 
 		ShaderProgram.defaultShader.bind();
@@ -172,7 +161,6 @@ private:
 	}
 
 	Texture _spritesheet;
-	ShaderProgram _shader;
 	ShaderProgram _bgShader;
 	RectangleShape _bg;
 	Guy[4] _guys;
