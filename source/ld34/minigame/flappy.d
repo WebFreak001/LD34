@@ -50,7 +50,7 @@ public:
 		super.start(difficulty);
 		x = 200;
 		y = 200;
-		xv = 1;
+		xv = 1 + difficulty * 0.5f;
 		yv = 0.002f;
 		t = 0;
 		_won = true;
@@ -91,6 +91,11 @@ public:
 	}
 
 	override void draw() {
+		_game.indicatorA.position = vec2(470, y);
+		_game.target.draw(_game.indicatorA);
+		_game.indicatorB.position = vec2(380, y - 64);
+		_game.target.draw(_game.indicatorB);
+	
 		heli.position = vec2(400, y);
 		_game.target.draw(heli);
 
