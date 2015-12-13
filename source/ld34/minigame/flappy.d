@@ -17,7 +17,6 @@ public:
 			TextureFilterMode.Nearest, TextureFilterMode.Nearest);
 		//dfmt off
 		pipes = [
-			RectangleShape.create(pipe, vec2(600, -10), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(1000, -64), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(1400, -100), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(1800, -150), vec2(64, 256), vec4(0, 1, 1, 0)),
@@ -31,7 +30,6 @@ public:
 			RectangleShape.create(pipe, vec2(5000, -150), vec2(64, 256), vec4(0, 1, 1, 0)),
 			RectangleShape.create(pipe, vec2(5400, -30), vec2(64, 256), vec4(0, 1, 1, 0)),
 			
-			RectangleShape.create(pipe, vec2(600, WindowHeight - 110), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1000, WindowHeight - 164), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1400, WindowHeight - 200), vec2(64, 256), vec4(0, 0, 1, 1)),
 			RectangleShape.create(pipe, vec2(1800, WindowHeight - 250), vec2(64, 256), vec4(0, 0, 1, 1)),
