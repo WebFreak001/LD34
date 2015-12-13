@@ -532,7 +532,7 @@ private:
 		_minigames ~= new DontReact(this);
 		//_minigames ~= new DontSimon(this);
 		//_minigames ~= new Fish(this);
-		//_minigames ~= new Flappy(this);
+		_minigames ~= new Flappy(this);
 		_minigames ~= new FloppyAvoid(this);
 		_minigames ~= new MissingPiece(this);
 		//_minigames ~= new QWOP(this);
