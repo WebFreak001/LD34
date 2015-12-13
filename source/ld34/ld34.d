@@ -6,10 +6,16 @@ import std.algorithm;
 import std.stdio;
 import std.random;
 import std.datetime;
+import std.json;
 
 import ld34.minigame.minigame;
 import ld34.render.keyindicator;
 import ld34.render.rendertexture;
+
+import core.exception;
+import core.thread;
+
+import std.net.curl;
 
 public enum WindowWidth = 1280;
 public enum WindowHeight = 720;
@@ -33,8 +39,79 @@ static double circularin(double delta, double offset, double time) {
 	return -delta * (sqrt(1 - time * time) - 1) + offset;
 }
 
+struct ScoreboardEntry {
+	string name;
+	long score;
+}
+
+shared ScoreboardEntry[] scoreboard;
+shared long[] toSubmit;
+
+ScoreboardThread scoreboardThread;
+
+class ScoreboardThread : Thread {
+	string username;
+	bool running;
+	this(string username) {
+		super(&run);
+		this.username = username;
+		running = true;
+	}
+	
+	void stop() {
+		running = false;
+	}
+
+private:
+	void run() {
+		try {
+			while(running) {
+				try {
+					parseScoreboard(cast(string) get("score.webfreak.org/leaderboard"));
+					
+					if(toSubmit.length > 0) {
+						string last;
+						foreach(entry; toSubmit) {
+							string data = JSONValue(["name": JSONValue(username), "score": JSONValue(entry)]).toString();
+							HTTP http = HTTP();
+							http.addRequestHeader("Content-Type", "application/json");
+							last = cast(string) post("score.webfreak.org/score", cast(ubyte[]) data, http);
+						}
+						parseScoreboard(last);
+						toSubmit = [];
+					}
+				} catch(Exception e) {
+					writeln("Exception in scoreboard thread: ", e);
+					Thread.sleep(10.seconds);
+				} catch(AssertError e) {
+					writeln("AssertError in scoreboard thread: ", e);
+					Thread.sleep(10.seconds);
+				}
+				Thread.sleep(10.seconds);
+			}
+		} catch(Throwable t) {
+			writeln("Fatal exception in scoreboard thread: ", t);
+		}
+	}
+	
+	void parseScoreboard(string content) {
+		auto json = parseJSON(content);
+		assert(json.type == JSON_TYPE.ARRAY);
+		
+		scoreboard = [];
+		foreach(entry; json.array) {
+			scoreboard ~= ScoreboardEntry(entry["name"].str, cast(long) entry["score"].integer);
+		}
+	}
+}
+
 class LD34 : Game {
 public:
+	this(string username) {
+		scoreboardThread = new ScoreboardThread(username);
+		scoreboardThread.start();
+	}
+
 	override void start() {
 		windowWidth = WindowWidth;
 		windowHeight = WindowHeight;
@@ -82,7 +159,7 @@ public:
 		_colorTexture.set("tex", 0);
 		_colorTexture.set("opacity", 1);
 		_colorTexture.set("color", vec3(1, 1, 1));
-		
+
 		_textureOffset = ShaderProgram.fromVertexFragmentFiles("res/shader/base.vert",
 			"res/shader/texoffset.frag");
 		_textureOffset.bind();
@@ -181,10 +258,12 @@ public:
 				_state = GameOver;
 				_time = 0;
 				_gameOverText.text = "Game Over! Your Score: " ~ to!string(totalScore);
+				toSubmit ~= cast(long) totalScore;
 				_blankShape.position = _gameOverText.position;
 				_blankShape.size = _gameOverText.size;
 				_blankShape.create();
 				reset();
+				writeln("Scoreboard: ", scoreboard);
 			}
 			break;
 		case GameOver:
@@ -416,7 +495,7 @@ public:
 	@property auto colorTextureShader() {
 		return _colorTexture;
 	}
-	
+
 	@property auto textureOffsetShader() {
 		return _textureOffset;
 	}
