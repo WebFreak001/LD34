@@ -131,7 +131,7 @@ public:
 		windowHeight = WindowHeight;
 		windowTitle = "LD34 Growing madness!";
 		maxFPS = 0;
-		flags |= WindowFlags.Resizable;
+		//flags |= WindowFlags.Resizable;
 		_buttonA = SDLK_LEFT;
 		_buttonB = SDLK_RIGHT;
 	}
